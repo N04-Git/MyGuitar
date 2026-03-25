@@ -1,0 +1,13 @@
+    /* Home Page */
+
+main {
+    width: 100%;
+    height: auto;
+}
+
+/* Fretboard */
+.fretboard-view {
+    width: 80%;
+    height: auto;
+    border: 1px dashed blue;
+}

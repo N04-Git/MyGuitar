@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+<!-- Title -->
+{% block title %}MyGuitar{% endblock %}
+
+<!-- CSS -->
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/_typo.css') }}">
+{% endblock %}
+
+<!-- Content -->
+{% block content %}
+    <main>
+        <div class="fretboard-view"></div>
+    </main>
+{% endblock %}
+
+<!-- JS -->
+{% block js %}
+<script src="{{ url_for('static', filename='js/fretboard.js') }}"></script>
+{% endblock %}

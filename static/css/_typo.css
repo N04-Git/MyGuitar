@@ -1,0 +1,10 @@
+/* Typography CSS */
+
+@font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Medium.woff') format('woff2'),
+        url('../fonts/OpenSans-Medium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
