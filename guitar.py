@@ -129,7 +129,7 @@ class Note:
     def adjustName(self, target_note_index:int):
         # Update name
         target_note_index %= 12
-    
+
         # Compute shortest circular distance
         diff = (target_note_index - self.index) % 12
         if diff > 6:
@@ -151,11 +151,14 @@ class NotePosition:
         self.chord = string
         self.fret = fret
 
+    def get_distance(self) -> int:
+        min_string = STRINGS_OFFSETS.get(self.chord, 0)
+        return self.fret - min_string
+
 class ChordPosition:
-    def __init__(self, root_note:Note, notes_position:list[NotePosition], margin_right:int=0) -> None:
+    def __init__(self, root_note:Note, notes_position:list[NotePosition]) -> None:
         self.root_note = root_note
         self.notes_position = notes_position
-        self.margin_right = margin_right
 
         # Adjust notes position (handle root_note index + margin)
         self.adjustNotesPosition()
@@ -165,25 +168,33 @@ class ChordPosition:
 
     def adjustNotesPosition(self):
         octave_shift = False
+
         # Apply shifting based on route note
         for note in self.notes_position:
+
             min_string = STRINGS_OFFSETS.get(note.chord, 0)
             target = (note.fret + self.root_note.index) % 12
 
-            print(target, min_string-self.margin_right, NOTES[target])
-            if target < (min_string-self.margin_right):
-                if target < min_string:
-                    # Increase single note
-                    target += 12
-            
+            if target < min_string:
+                target += 12
 
             note.fret = target
 
-        if octave_shift:
-            for n in self.notes_position:
-                n.fret += 12
+        # Fix layout
+        while self.get_max_space_between_notes() > 6:
 
-        print('')
+            # Shift by an octave lowest note
+            for n in self.notes_position:
+                d = n.get_distance() % 12
+                if d < 6:
+                    n.fret+=12
+
+    def get_max_space_between_notes(self) -> int:
+        distances = []
+        for n in self.notes_position:
+            distances.append(n.get_distance())
+        return max(distances) - min(distances)
+
 
 class Pattern:
     def __init__(self, notes:list[NotePosition] | list[Note] | ChordPosition) -> None:
@@ -232,6 +243,14 @@ class Pattern:
                                 counter += 1
 
         return F
+
+class Chord:
+    def __init__(self, root_note:Note, string_offset=4) -> None:
+        self.rootNote = root_note
+        self.name = f"{root_note._name} "
+        self.structure = [] # Refers to Major Scale // Semitones
+        self.sound = ""
+        self.patterns: Tuple[Pattern, ...] = () # Chord chart
 
 class Key:
     def __init__(self, baseNote:Note) -> None:
@@ -366,14 +385,6 @@ class Exercise:
             show_fretboard(pattern.apply())
             time.sleep(1.0)
 
-class Chord:
-    def __init__(self, root_note:Note, string_offset=4) -> None:
-        self.rootNote = root_note
-        self.name = f"{root_note._name} "
-        self.structure = [] # Refers to Major Scale // Semitones
-        self.sound = ""
-        self.patterns: Tuple[Pattern, ...] = () # Chord chart
-
 class Chord_Major(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note)
@@ -382,22 +393,22 @@ class Chord_Major(Chord):
         self.sound = "Happy"
         self.patterns = (
             # Pattern 1
-            Pattern([
-                NotePosition(0, self.rootNote_index+0),   # F
-                NotePosition(1, self.rootNote_index+0),   # 5
-                NotePosition(2, self.rootNote_index+1),   # 3
-                NotePosition(3, self.rootNote_index+2),   # F
-                NotePosition(4, self.rootNote_index+2),   # 5
-                NotePosition(5, self.rootNote_index+0)    # F
-            ]),
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3M']),
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
             # Pattern 2
-            Pattern([
-                NotePosition(0, self.rootNote_index+0),   # 5
-                NotePosition(1, self.rootNote_index+2),   # 3
-                NotePosition(2, self.rootNote_index+2),   # F
-                NotePosition(3, self.rootNote_index+2),   # 5
-                NotePosition(4, self.rootNote_index+0),   # F
-            ])
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['5J']),
+                NotePosition(1, INTERVALS['3M']),
+                NotePosition(2, INTERVALS['FD']),
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Minor(Chord):
@@ -408,22 +419,22 @@ class Chord_Minor(Chord):
         self.sound = "Sad"
         self.patterns = (
             # Pattern 1
-            Pattern([
-                NotePosition(0, self.rootNote_index + 0),
-                NotePosition(1, self.rootNote_index + 0),
-                NotePosition(2, self.rootNote_index + 0),
-                NotePosition(3, self.rootNote_index + 2),
-                NotePosition(4, self.rootNote_index + 2),
-                NotePosition(5, self.rootNote_index + 0)
-            ]),
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3m']),
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
             # Pattern 2
-            Pattern([
-                NotePosition(0, self.rootNote_index + 0),
-                NotePosition(1, self.rootNote_index + 1),
-                NotePosition(2, self.rootNote_index + 2),
-                NotePosition(3, self.rootNote_index + 2),
-                NotePosition(4, self.rootNote_index + 0)
-            ]),
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['5J']),
+                NotePosition(1, INTERVALS['3m']),
+                NotePosition(2, INTERVALS['FD']),
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Major7(Chord):
@@ -433,21 +444,23 @@ class Chord_Major7(Chord):
         self.structure = [0, 4, 7, 11]
         self.sound = "Smooth / Jazzy"
         self.patterns = (
-            Pattern([
-                NotePosition(0, self.rootNote_index + 0),
-                NotePosition(1, self.rootNote_index + 0),
-                NotePosition(2, self.rootNote_index + 1),
-                NotePosition(3, self.rootNote_index + 1),
-                NotePosition(4, self.rootNote_index + 2),
-                NotePosition(5, self.rootNote_index + 0)
-            ]),
-            Pattern([
-                NotePosition(0, self.rootNote_index + 0),
-                NotePosition(1, self.rootNote_index + 2),
-                NotePosition(2, self.rootNote_index + 1),
-                NotePosition(3, self.rootNote_index + 2),
-                NotePosition(4, self.rootNote_index + 0),
-            ]),
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3M']),
+                NotePosition(3, INTERVALS['7M']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+            # Pattern 2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['5J']),
+                NotePosition(1, INTERVALS['3M']),
+                NotePosition(2, INTERVALS['7M']),
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Minor7(Chord):
@@ -457,21 +470,23 @@ class Chord_Minor7(Chord):
         self.structure = [0, 3, 7, 10]
         self.sound = "Soft / Bluesy"
         self.patterns = (
-            Pattern([
-                NotePosition(0, self.rootNote_index + 0),
-                NotePosition(1, self.rootNote_index + 0),
-                NotePosition(2, self.rootNote_index + 0),
-                NotePosition(3, self.rootNote_index + 0),
-                NotePosition(4, self.rootNote_index + 2),
-                NotePosition(5, self.rootNote_index + 0)
-            ]),
-            Pattern([
-                NotePosition(0, self.rootNote_index + 0),
-                NotePosition(1, self.rootNote_index + 1),
-                NotePosition(2, self.rootNote_index + 0),
-                NotePosition(3, self.rootNote_index + 2),
-                NotePosition(4, self.rootNote_index + 0),
-            ]),
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3m']),
+                NotePosition(3, INTERVALS['7m']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+            # Pattern 2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['5J']),
+                NotePosition(1, INTERVALS['3m']),
+                NotePosition(2, INTERVALS['7m']),
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Sus2(Chord):
@@ -481,21 +496,23 @@ class Chord_Sus2(Chord):
         self.structure = [0, 2, 7]
         self.sound = "Open / Floating"
         self.patterns = (
-            Pattern([
-                NotePosition(0, self.rootNote_index + 1),
-                NotePosition(1, self.rootNote_index + 1),
-                NotePosition(2, self.rootNote_index + 0),
-                NotePosition(3, self.rootNote_index + 3),
-                NotePosition(4, self.rootNote_index + 3),
-                NotePosition(5, self.rootNote_index + 1)
-            ]),
-            Pattern([
-                NotePosition(0, self.rootNote_index + 1),
-                NotePosition(1, self.rootNote_index + 1),
-                NotePosition(2, self.rootNote_index + 3),
-                NotePosition(3, self.rootNote_index + 3),
-                NotePosition(4, self.rootNote_index + 1),
-            ]),
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['2M']),
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+            # Pattern 2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['5J']),
+                NotePosition(1, INTERVALS['2M']),
+                NotePosition(2, INTERVALS['FD']),
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Sus4(Chord):
@@ -505,21 +522,23 @@ class Chord_Sus4(Chord):
         self.structure = [0, 5, 7]
         self.sound = "Tension / Suspended"
         self.patterns = (
-            Pattern([
-                NotePosition(0, self.rootNote_index + 0),
-                NotePosition(1, self.rootNote_index + 0),
-                NotePosition(2, self.rootNote_index + 2),
-                NotePosition(3, self.rootNote_index + 2),
-                NotePosition(4, self.rootNote_index + 2),
-                NotePosition(5, self.rootNote_index + 0)
-            ]),
-            Pattern([
-                NotePosition(0, self.rootNote_index + 0),
-                NotePosition(1, self.rootNote_index + 3),
-                NotePosition(2, self.rootNote_index + 2),
-                NotePosition(3, self.rootNote_index + 2),
-                NotePosition(4, self.rootNote_index + 0),
-            ]),
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['4J']),
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+            # Pattern 2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['5J']),
+                NotePosition(1, INTERVALS['4J']),
+                NotePosition(2, INTERVALS['FD']),
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Major6(Chord):
@@ -529,11 +548,12 @@ class Chord_Major6(Chord):
         self.structure = [0, 4, 7, 9]
         self.sound = "Warm / Stable"
         self.patterns = (
-            Pattern([
-                NotePosition(2, self.rootNote_index + 2),
-                NotePosition(3, self.rootNote_index + 0),
-                NotePosition(5, self.rootNote_index + 1),
-            ]),
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['3M']),
+                NotePosition(3, INTERVALS['6M']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Minor6(Chord):
@@ -543,17 +563,12 @@ class Chord_Minor6(Chord):
         self.structure = [0, 3, 7, 9]
         self.sound = "Melancholic / Jazz"
         self.patterns = (
-            Pattern([
-                NotePosition(2, self.rootNote_index + 2),
-                NotePosition(3, self.rootNote_index + 0),
-                NotePosition(5, self.rootNote_index + 2),
-            ]),
-            Pattern([
-                NotePosition(2, self.rootNote_index + 2),
-                NotePosition(3, self.rootNote_index + 4),
-                NotePosition(4, self.rootNote_index + 5),
-                NotePosition(5, self.rootNote_index + 2),
-            ]),
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['3m']),
+                NotePosition(3, INTERVALS['6M']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_9(Chord):
@@ -563,12 +578,13 @@ class Chord_9(Chord):
         self.structure = [0, 4, 7, 10, 14]
         self.sound = "Rich / Funky"
         self.patterns = (
-            Pattern([
-                NotePosition(1, self.rootNote_index + 1),
-                NotePosition(2, self.rootNote_index + 1),
-                NotePosition(3, self.rootNote_index + 0),
-                NotePosition(4, self.rootNote_index + 1),
-            ]),
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['9M']),
+                NotePosition(2, INTERVALS['7m']),
+                NotePosition(3, INTERVALS['3M']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Major9(Chord):
@@ -578,18 +594,20 @@ class Chord_Major9(Chord):
         self.structure = [0, 4, 7, 11, 14]
         self.sound = "Lush / Dreamy"
         self.patterns = (
-            Pattern([
-                NotePosition(1, self.rootNote_index + 1),
-                NotePosition(2, self.rootNote_index + 2),
-                NotePosition(3, self.rootNote_index + 0),
-                NotePosition(4, self.rootNote_index + 1),
-            ]),
-            Pattern([
-                NotePosition(2, self.rootNote_index + 0),
-                NotePosition(3, self.rootNote_index + 2),
-                NotePosition(4, self.rootNote_index + 0),
-                NotePosition(5, self.rootNote_index + 1),
-            ]),
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['9M']),
+                NotePosition(2, INTERVALS['7M']),
+                NotePosition(3, INTERVALS['3M']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
+            # Pattern 2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['9M']),
+                NotePosition(3, INTERVALS['7M']),
+                NotePosition(4, INTERVALS['3M']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
         )
 
 class Chord_Minor9(Chord):
@@ -604,7 +622,13 @@ class Chord_Minor9(Chord):
                 NotePosition(2, INTERVALS['7m']),
                 NotePosition(3, INTERVALS['3m']),
                 NotePosition(4, INTERVALS['FD']),
-            ], margin_right=2)),
+            ])),
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['9M']),
+                NotePosition(3, INTERVALS['7m']),
+                NotePosition(4, INTERVALS['3m']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
         )
 
 # FRETBOARD
@@ -696,5 +720,6 @@ def fill_text(text, width):
 
 # # # # # # # # # # # # # # # # # #
 
-sol = Note("La#")
-show_fretboard(Chord_Minor9(sol).patterns[0].apply())
+n = Note('Do')
+for pattern in Chord_Minor9(n).patterns:
+    show_fretboard(pattern.apply())
