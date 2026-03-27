@@ -1,0 +1,18 @@
+    Add following chords :
+
+# MAJOR
+Chord_Major11,
+Chord_Major13,
+Chord_Add9,
+
+# MINOR
+Chord_Minor11, // OK
+Chord_Minor13,
+Chord_MinorAdd9,
+Chord_MinorSus2,
+Chord_MinorSus4,
+
+# DIMINISHED
+Chord_Diminished,
+Chord_Dim7,
+Chord_HalfDim7,

@@ -5,6 +5,10 @@ import re
 import os
 import copy
 import time
+from typing import List, Tuple, Type
+
+# TMP
+os.system('cls')
 
 #### Constants
 
@@ -27,6 +31,12 @@ INTERVALS = {
     '6M':   9,
     '7m':   10,
     '7M':   11,
+    '9m':   13 %12,
+    '9M':   14 %12,
+    '11J':  17 %12,
+    '11#':  18 %12,
+    '13m':  20 %12,
+    '13M':  21 %12,
 }
 
 LETTERS = {
@@ -73,6 +83,15 @@ COLORS = {
     "RED" : "\033[91m",
     "GREEN" : "\033[92m",
     "RESET" : "\033[0m"
+}
+
+STRINGS_OFFSETS = {
+    0:4,
+    1:11,
+    2:7,
+    3:2,
+    4:9,
+    5:4,
 }
 
 LEFT_HANDED = True
@@ -132,10 +151,49 @@ class NotePosition:
         self.chord = string
         self.fret = fret
 
+class ChordPosition:
+    def __init__(self, root_note:Note, notes_position:list[NotePosition], margin_right:int=0) -> None:
+        self.root_note = root_note
+        self.notes_position = notes_position
+        self.margin_right = margin_right
+
+        # Adjust notes position (handle root_note index + margin)
+        self.adjustNotesPosition()
+
+    def get_notes(self) -> list[NotePosition]:
+        return self.notes_position
+
+    def adjustNotesPosition(self):
+        octave_shift = False
+        # Apply shifting based on route note
+        for note in self.notes_position:
+            min_string = STRINGS_OFFSETS.get(note.chord, 0)
+            target = (note.fret + self.root_note.index) % 12
+
+            print(target, min_string-self.margin_right, NOTES[target])
+            if target < (min_string-self.margin_right):
+                if target < min_string:
+                    # Increase single note
+                    target += 12
+            
+
+            note.fret = target
+
+        if octave_shift:
+            for n in self.notes_position:
+                n.fret += 12
+
+        print('')
+
 class Pattern:
-    def __init__(self, notes:list[NotePosition] | list[Note]) -> None:
-        self.notes = notes
-        self.kind = type(notes[0])
+    def __init__(self, notes:list[NotePosition] | list[Note] | ChordPosition) -> None:
+        if isinstance(notes, ChordPosition):
+            # Get notes
+            self.notes = notes.get_notes()
+            self.kind = NotePosition
+        else:
+            self.notes = notes
+            self.kind = type(notes[0])
 
     def apply(self, row_notes_limit=1) -> list[list[Note]]:
 
@@ -147,9 +205,17 @@ class Pattern:
 
         # Check kind
         if self.kind == NotePosition:
+            # For each note to place
             for n in self.notes:
+                counter = 0
                 if isinstance(n, NotePosition):
-                    F[n.chord][n.fret].highlight = True
+                    # For each note in row
+                    for note in F[n.chord]:
+                        # If note's index matches
+                        if n.fret == note.index:
+                            if counter < row_notes_limit:
+                                note.highlight = True
+                                counter += 1
 
         elif self.kind == Note:
             # For each row
@@ -173,6 +239,7 @@ class Key:
         self.name = "DEFAULT NAME VALUE"
         self.architecture = []
         self.sound = "DEFAULT SOUND VALUE"
+        self.degrees_quality = [] # To define for each scale
 
     def get_notes(self) -> list[Note]:
         n = [self.baseNote]
@@ -209,6 +276,57 @@ class Key:
 
         return n
 
+    def get_degrees_quality(self) -> List[Tuple[Type[Chord], ...]]:
+        # Calculate each degree's quality based on the scale's architecture
+        degrees = []
+        for i in range(len(self.architecture)):
+            fd = i
+            third = (i+2)
+            fith = (i+4)
+            i3 = get_interval(self.architecture, fd, third)
+            i5 = get_interval(self.architecture, third, fith)
+            # print(f"{fd} >>{i3}<< {third} >>{i5}<< {fith}")
+
+            if i3 == 2.0 and i5 == 1.5:
+                quality = MAJOR_CHORDS
+            elif i3 == 1.5 and i5 == 2:
+                quality = MINOR_CHORDS
+            elif i3 == 1.5 and i5 == 1.5:
+                quality = DIMINISHED_CHORDS
+            else:
+                print('Unknown interval :', i3, i5)
+
+            degrees.append(quality)
+
+        return degrees
+
+    def build_chord(self, degree:int) -> list[Chord]:
+        if not (1 <= degree <= 7):
+            raise ValueError("Degree out of range (1-7) :", degree)
+
+        l = []
+
+        # Get FD of the degree
+        f = self.get_notes()[degree-1]
+
+        list_of_chords = self.get_degrees_quality()[degree]
+        for chord in list_of_chords:
+            l.append(chord(f))
+
+        return l
+
+    def get_all_chords(self) -> list[list[Chord]]:
+        degrees_chords = []
+
+        for degree_i in range(1, len(self.architecture)):
+            # Number of notes = number of intervals in the architecture
+            degrees_chords.append(
+                self.build_chord(degree_i)
+            )
+            # print('Getting chords of degree : ', degree_i+1)
+
+        return degrees_chords
+
 class IonanKey(Key):
     def __init__(self, baseNote) -> None:
         super().__init__(baseNote)
@@ -233,8 +351,11 @@ class HarmonicMinorKey(Key):
         self.architecture = [2, 1, 2, 2, 1, 3, 1]
 
 class Exercise:
-    def __init__(self, patterns:list[Pattern]) -> None:
+    def __init__(self, name:str, key:Note, patterns:list[Pattern]=[], tempo=90) -> None:
+        self.name = name
+        self.key = key
         self.patterns = patterns
+        self.tempo = tempo
 
     def addPattern(self, pattern:Pattern):
         self.patterns.append(pattern)
@@ -248,17 +369,15 @@ class Exercise:
 class Chord:
     def __init__(self, root_note:Note, string_offset=4) -> None:
         self.rootNote = root_note
-        self.string_offest = string_offset
-        self.rootNote_index = adjust_root_for_ostring(self.rootNote.index, string_offset=self.string_offest)
-        self.name = "DEFAULT CHORD NAME"
+        self.name = f"{root_note._name} "
         self.structure = [] # Refers to Major Scale // Semitones
         self.sound = ""
-        self.patterns = [] # Chord chart
+        self.patterns: Tuple[Pattern, ...] = () # Chord chart
 
 class Chord_Major(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note)
-        self.name = "Majeur"
+        self.name += "Majeur"
         self.structure = [0, 4, 7]
         self.sound = "Happy"
         self.patterns = (
@@ -284,7 +403,7 @@ class Chord_Major(Chord):
 class Chord_Minor(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note)
-        self.name = "Mineur"
+        self.name += "Mineur"
         self.structure = [0, 3, 7]
         self.sound = "Sad"
         self.patterns = (
@@ -310,7 +429,7 @@ class Chord_Minor(Chord):
 class Chord_Major7(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note)
-        self.name = "7e Majeur"
+        self.name += "7e Majeur"
         self.structure = [0, 4, 7, 11]
         self.sound = "Smooth / Jazzy"
         self.patterns = (
@@ -334,7 +453,7 @@ class Chord_Major7(Chord):
 class Chord_Minor7(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note)
-        self.name = "7e Mineur"
+        self.name += "7e Mineur"
         self.structure = [0, 3, 7, 10]
         self.sound = "Soft / Bluesy"
         self.patterns = (
@@ -358,7 +477,7 @@ class Chord_Minor7(Chord):
 class Chord_Sus2(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note, 5)
-        self.name = "Sus2"
+        self.name += "Sus2"
         self.structure = [0, 2, 7]
         self.sound = "Open / Floating"
         self.patterns = (
@@ -382,7 +501,7 @@ class Chord_Sus2(Chord):
 class Chord_Sus4(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note)
-        self.name = "Sus4"
+        self.name += "Sus4"
         self.structure = [0, 5, 7]
         self.sound = "Tension / Suspended"
         self.patterns = (
@@ -406,7 +525,7 @@ class Chord_Sus4(Chord):
 class Chord_Major6(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note, 5)
-        self.name = "6e Majeur"
+        self.name += "6e Majeur"
         self.structure = [0, 4, 7, 9]
         self.sound = "Warm / Stable"
         self.patterns = (
@@ -420,7 +539,7 @@ class Chord_Major6(Chord):
 class Chord_Minor6(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note, 6)
-        self.name = "6e Mineur"
+        self.name += "6e Mineur"
         self.structure = [0, 3, 7, 9]
         self.sound = "Melancholic / Jazz"
         self.patterns = (
@@ -440,7 +559,7 @@ class Chord_Minor6(Chord):
 class Chord_9(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note, 5)
-        self.name = "9e"
+        self.name += "9e"
         self.structure = [0, 4, 7, 10, 14]
         self.sound = "Rich / Funky"
         self.patterns = (
@@ -455,7 +574,7 @@ class Chord_9(Chord):
 class Chord_Major9(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note, 5)
-        self.name = "9e Majeur"
+        self.name += "9e Majeur"
         self.structure = [0, 4, 7, 11, 14]
         self.sound = "Lush / Dreamy"
         self.patterns = (
@@ -475,27 +594,20 @@ class Chord_Major9(Chord):
 
 class Chord_Minor9(Chord):
     def __init__(self, root_note:Note) -> None:
-        super().__init__(root_note, 6)
-        self.name = "9e Mineur"
+        super().__init__(root_note)
+        self.name += "9e Mineur"
         self.structure = [0, 3, 7, 10, 14]
         self.sound = "Deep / Smooth"
         self.patterns = (
-            Pattern([
-                NotePosition(1, self.rootNote_index + 2),
-                NotePosition(2, self.rootNote_index + 2),
-                NotePosition(3, self.rootNote_index + 0),
-                NotePosition(4, self.rootNote_index + 2),
-            ]),
-            Pattern([
-                NotePosition(2, self.rootNote_index + 1),
-                NotePosition(3, self.rootNote_index + 2),
-                NotePosition(4, self.rootNote_index + 0),
-                NotePosition(5, self.rootNote_index + 2),
-            ]),
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['9M']),
+                NotePosition(2, INTERVALS['7m']),
+                NotePosition(3, INTERVALS['3m']),
+                NotePosition(4, INTERVALS['FD']),
+            ], margin_right=2)),
         )
 
 # FRETBOARD
-
 FRETBOARD_LENGTH = 20
 FRETBOARD = [
     [Note(4)],
@@ -505,17 +617,42 @@ FRETBOARD = [
     [Note(9)],
     [Note(4)]
 ]
-
-# Generate full fretboard
 for n_chord in range(len(FRETBOARD)):
     for i in range(1, FRETBOARD_LENGTH):
         initial_note = FRETBOARD[n_chord][0].index
         next_note = Note(initial_note + i)
         FRETBOARD[n_chord].append(next_note)
 
-# Functions
 
-def duplicate_fretboard(fretboard:list[list]) -> list[list]:
+# CHORDS LIST
+MAJOR_CHORDS = (
+    Chord_Major,
+    Chord_Major6,
+    Chord_Major7,
+    Chord_Major9,
+)
+
+MINOR_CHORDS = (
+    Chord_Minor,
+    Chord_Minor6,
+    Chord_Minor7,
+    Chord_Minor9
+)
+
+DIMINISHED_CHORDS = (
+
+)
+
+# Functions
+def get_interval(architecture:list[int], n1:int, n2:int):
+    s = 0
+    begin = n1
+    for i in range(n2-n1):
+        s += architecture[(begin+i) % 7]
+
+    return s/2
+
+def duplicate_fretboard(fretboard:list[list]) -> list[list[Note]]:
     return copy.deepcopy(fretboard)
 
 def show_fretboard(fretboard:list[list[Note]]):
@@ -557,15 +694,7 @@ def fill_text(text, width):
     space_to_add = width - visible_length(text)
     return text + " " * space_to_add
 
-def adjust_root_for_ostring(root_index: int, string_offset: int = 4) -> int:
-    """
-    Adjust root note index relative to the low E string (or any string offset),
-    wrapping around modulo 12.
-    """
-    return (root_index - string_offset) % 12
-
 # # # # # # # # # # # # # # # # # #
 
-# Highlight key's notes
-
-show_fretboard(Chord_Sus2(Note('Fa')).patterns[1].apply())
+sol = Note("La#")
+show_fretboard(Chord_Minor9(sol).patterns[0].apply())
