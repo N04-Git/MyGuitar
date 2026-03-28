@@ -1,5 +1,6 @@
 # API Routes
 from flask import Blueprint, jsonify
+import guitar
 
 api_router = Blueprint('api', __name__, url_prefix='/api')
 

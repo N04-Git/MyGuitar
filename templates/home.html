@@ -1,21 +1,38 @@
-{% extends "base.html" %}
+{% extends "_base.html" %}
 
 <!-- Title -->
 {% block title %}MyGuitar{% endblock %}
 
 <!-- CSS -->
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/_typo.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 
 <!-- Content -->
 {% block content %}
     <main>
-        <div class="fretboard-view"></div>
+        <!-- Title -->
+        <div class="title-box">
+            <h1>MyGuitar</h1>
+            <label for="version">v0.1</label>
+        </div>
+
+        <div class="frame">
+            <h2>Dernières nouveautés</h2>
+            <ul>
+                <li>Lorem ipsum dolor sit</li>
+                <li>Lorem ipsum dolor sit</li>
+                <li>Lorem ipsum dolor sit</li>
+                <li>Lorem ipsum dolor sit</li>
+                <li>Lorem ipsum dolor sit</li>
+                <li>Lorem ipsum dolor sit</li>
+                <li>Lorem ipsum dolor sit</li>
+            </ul>
+        </div>
+
     </main>
 {% endblock %}
 
 <!-- JS -->
 {% block js %}
-<script src="{{ url_for('static', filename='js/fretboard.js') }}"></script>
 {% endblock %}

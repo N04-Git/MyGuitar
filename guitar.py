@@ -328,21 +328,24 @@ class Key:
         # Get FD of the degree
         f = self.get_notes()[degree-1]
 
-        list_of_chords = self.get_degrees_quality()[degree]
+        list_of_chords = self.get_degrees_quality()[degree-1]
         for chord in list_of_chords:
             l.append(chord(f))
 
         return l
 
     def get_all_chords(self) -> list[list[Chord]]:
+        """
+        Returns : list of 7 degrees, each degree containing all the associated chords
+        """
         degrees_chords = []
 
-        for degree_i in range(1, len(self.architecture)):
+        for degree_i in range(1, len(self.architecture)+1):
             # Number of notes = number of intervals in the architecture
             degrees_chords.append(
                 self.build_chord(degree_i)
             )
-            # print('Getting chords of degree : ', degree_i+1)
+            # print('Getting chords of degree : ', degree_i)
 
         return degrees_chords
 
@@ -631,6 +634,24 @@ class Chord_Minor9(Chord):
             ])),
         )
 
+class Chord_Diminished(Chord):
+    def __init__(self, root_note: Note) -> None:
+        super().__init__(root_note)
+        self.name += " Dim"
+        self.structure = [0, 3, 6, 9]
+        self.sound = "Tense / Dark"
+        self.patterns = (
+        )
+
+class Chord_HalfDiminished(Chord):
+    def __init__(self, root_note: Note) -> None:
+        super().__init__(root_note)
+        self.name += "ø7"
+        self.structure = [0, 3, 6, 10]
+        self.sound = "Mellow / Tense"
+        self.patterns = (
+        )
+
 # FRETBOARD
 FRETBOARD_LENGTH = 20
 FRETBOARD = [
@@ -647,24 +668,28 @@ for n_chord in range(len(FRETBOARD)):
         next_note = Note(initial_note + i)
         FRETBOARD[n_chord].append(next_note)
 
-
 # CHORDS LIST
 MAJOR_CHORDS = (
     Chord_Major,
     Chord_Major6,
     Chord_Major7,
     Chord_Major9,
+    Chord_Sus2,
+    Chord_Sus4
 )
 
 MINOR_CHORDS = (
     Chord_Minor,
     Chord_Minor6,
     Chord_Minor7,
-    Chord_Minor9
+    Chord_Minor9,
+    Chord_Sus2,
+    Chord_Sus4,
 )
 
 DIMINISHED_CHORDS = (
-
+    Chord_Diminished,
+    Chord_HalfDiminished,
 )
 
 # Functions
@@ -720,6 +745,9 @@ def fill_text(text, width):
 
 # # # # # # # # # # # # # # # # # #
 
-n = Note('Do')
-for pattern in Chord_Minor9(n).patterns:
-    show_fretboard(pattern.apply())
+gamme = IonanKey(Note('Do'))
+for degree in gamme.get_all_chords():
+    for chord in degree:
+        print(chord.name)
+        pass
+    print('---')

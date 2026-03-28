@@ -1,0 +1,40 @@
+<header>
+
+    <!-- Title -->
+    <div class="title">
+        <h2>Menu</h2>
+    </div>
+
+    <!-- Tools -->
+    <div class="container">
+        <div class="item" data-url="/home">
+            <img src="{{ url_for('static', filename='images/ui/home.png') }}" alt="">
+            <h3>Accueil</h3>
+        </div>
+        <div class="item" data-url="/key">
+            <img src="{{ url_for('static', filename='images/ui/chord.png') }}" alt="">
+            <h3>Gamme</h3>
+        </div>
+        <div class="item" data-url="/chords">
+            <img src="{{ url_for('static', filename='images/ui/note.png') }}" alt="">
+            <h3>Accords</h3>
+        </div>
+        <div class="item" data-url="/practice">
+            <img src="{{ url_for('static', filename='images/ui/play.png') }}" alt="">
+            <h3>Exercices</h3>
+        </div>
+    </div>
+
+    <!-- Divers -->
+    <div class="container">
+        <div class="item" data-url="">
+            <img src="{{ url_for('static', filename='images/ui/tabs.png') }}" alt="">
+            <h3>Tablatures</h3>
+        </div>
+        <div class="item" data-url="">
+            <img src="{{ url_for('static', filename='images/ui/book.png') }}" alt="">
+            <h3>Cours</h3>
+        </div>
+    </div>
+
+</header>

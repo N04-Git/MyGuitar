@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Default Title{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/_base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/_header.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/_typo.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
     {% block css %}{% endblock %}
 </head>
 <body>
-    {% include "header.html" %}
-
-    <div id="background">
-        <img src="{{ url_for('static', filename='images/background.jpg') }}" alt="music-background">
-    </div>
+    {% include "_header.html" %}
+    <script src="{{ url_for('static', filename='js/header.js') }}"></script>
 
     {% block content %}
     <p>

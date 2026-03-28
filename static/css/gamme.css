@@ -1,0 +1,9 @@
+/* Key Page */
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    animation: fadeIn 4s ease 0.8s forwards;
+}

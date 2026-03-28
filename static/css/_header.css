@@ -1,0 +1,86 @@
+/* HEADER CSS */
+
+:root {
+    --transiton-time: 0.4s
+}
+
+header {
+    width: 20%;
+    max-width: 206px;
+    height: 100%;
+    border-right: 1px solid rgba(104, 104, 104, 0.51);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+}
+
+/* Title */
+header > .title {
+    display: flex;
+    justify-content: center;
+}
+
+/* Container */
+header > .container {
+    /* border: 1px dashed rgba(116, 51, 51, 0.493); */
+    height: fit-content;
+    width: fit-content;
+    margin-bottom: 66px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Container's Item */
+header > .container > .item {
+    border: 1px solid rgba(143, 143, 143, 0.247);
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 12px 0px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    transition: all var(--transiton-time);
+    cursor: pointer;
+}
+
+/* Container's Item */
+header > .container > .item.select {
+    border: 1px solid rgba(143, 143, 143, 0.9);
+    background-color: rgba(104, 104, 104, 0.14);
+}
+
+
+header > .container > .item > h3 {
+    transition: all var(--transiton-time);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+header > .container > .item > img {
+    width: 32px;
+    height: 32px;
+    margin-right: 7px;
+    margin-left: 3px;
+    filter: invert(1);
+    opacity: 0.5;
+    transform: scale(0.8);
+}
+
+/* Animation / Hover*/
+header:hover {
+    box-shadow: 0px 0px 3px rgba(165, 165, 165, 0.2);
+}
+
+header > .container > .item:hover {
+    border: 1px solid rgba(143, 143, 143, 0.65);
+    background-color: rgba(59, 59, 59, 0.1);
+}
+
+header > .container > .item:hover > h3 {
+    color: rgba(255, 255, 255, 0.73);
+    transform: translateX(5px);
+}
+

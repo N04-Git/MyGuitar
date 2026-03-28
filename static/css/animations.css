@@ -1,0 +1,30 @@
+/* Animations */
+@keyframes fadeIn {
+    0% {
+        opacity: 0%;
+    }
+    90% {
+        opacity: 100%;
+    }
+    100% {
+        opacity: 85%;
+    }
+}
+
+@keyframes fadeInFull {
+    0% {
+        opacity: 0%;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
+@keyframes underline {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
