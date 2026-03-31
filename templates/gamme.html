@@ -1,28 +1,125 @@
 {% extends "_base.html" %}
 
 <!-- Title -->
-{% block title %}Gamme{% endblock %}
+{% block title %}MyGuitar - Gamme{% endblock %}
 
 <!-- CSS -->
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/gamme.css') }}">
 {% endblock %}
 
+<!-- JS -->
+{% block js %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/gamme.js') }}"></script>
+{% endblock %}
+
 <!-- Content -->
 {% block content %}
     <main>
         <!-- Control Panel -->
-        <div class="frame">
+        <div class="frame p1">
+            <!-- Gamme -->
+            <div class="field">
+                <label for="gamme">Mode (Gamme) :</label>
+                <select name="gamme" id="gamme">
+                    <option value="ionien">Ionien</option>
+                    <option value="dorien">Dorien </option>
+                    <option value="phrygien">Phrygien</option>
+                    <option value="lydien">Lydien</option>
+                    <option value="mixolydien">Mixolydien</option>
+                    <option value="aeolien">Aéolien</option>
+                    <option value="aeolien-penta">Aéolien (Pentatonique)</option>
+                    <option value="locrien">Locrien</option>
+                </select>
+            </div>
+
+            <!-- Note -->
+            <div class="field">
+                <label for="note">Fondamentale :</label>
+                <select name="note" id="note">
+                    <option value="Do">Do</option>
+                    <option value="Do#">Do ♯</option>
+                    <option value="Dob">Do ♭</option>
+                    <option value="Ré">Ré</option>
+                    <option value="Ré#">Ré ♯</option>
+                    <option value="Réb">Ré ♭</option>
+                    <option value="Mi">Mi</option>
+                    <option value="Mi#">Mi ♯</option>
+                    <option value="Mib">Mi ♭</option>
+                    <option value="Fa">Fa</option>
+                    <option value="Fa#">Fa ♯</option>
+                    <option value="Fab">Fa ♭</option>
+                    <option value="Sol">Sol</option>
+                    <option value="Sol#">Sol ♯</option>
+                    <option value="Solb">Sol ♭</option>
+                    <option value="La">La</option>
+                    <option value="La#">La ♯</option>
+                    <option value="Lab">La ♭</option>
+                    <option value="Si">Si</option>
+                    <option value="Si#">Si ♯</option>
+                    <option value="Sib">Si ♭</option>
+                </select>
+            </div>
 
         </div>
 
-        <!-- Fretboard -->
-        <div class="frame">
+        <!-- Output Panel -->
+        <div class="frame p2">
+            <!-- Architecture -->
+            <div class="architecture">
+                <table>
+                    <!-- JS Handling -->
+                </table>
+            </div>
 
+            <!-- Chords -->
+            <div class="chords">
+                <div class="list">
+                    <div class="options">
+                        <!-- Chords list -->
+                        <div data-val="Majeur" class="item selected">
+                            <h4>Maj</h4>
+                        </div>
+                        <div data-val="Mineur" class="item selected">
+                            <h4>Min</h4>
+                        </div>
+                        <div data-val="6th" class="item">
+                            <h4>6<sup>ème</sup></h4>
+                        </div>
+                        <div data-val="7th" class="item">
+                            <h4>7<sup>ème</sup></h4>
+                        </div>
+                        <div data-val="9th" class="item">
+                            <h4>9<sup>ème</sup></h4>
+                        </div>
+                        <div data-val="Sus" class="item">
+                            <h4>Sus</h4>
+                        </div>
+                    </div>
+                    <div class="container"></div>
+                </div>
+
+                <div class="chart">
+                    <div class="wrapper">
+                        <div class="img-wrap disabled" id='prev-chart'>
+                            <img src="{{ url_for('static', filename='images/ui/left_arrow.png' )}}" alt="previous-icon">
+                        </div>
+                        <span class="number"></span>
+                        <div class="img-wrap" id='next-chart'>
+                            <img style="transform: rotate(180deg);" src="{{ url_for('static', filename='images/ui/left_arrow.png' )}}" alt="next-icon">
+                        </div>
+                    </div>
+                    <div class="container"></div>
+                    <h3 class="name"></h3>
+                    <div class="infos">
+                        <h4 class="kind"></h3>
+                        <h4 class="feeling"></h3>
+                        <h4 class="structure"></h3>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </main>
-{% endblock %}
-
-<!-- JS -->
-{% block js %}
 {% endblock %}

@@ -10,7 +10,10 @@ containers.forEach((container) => {
         if (target) {
             child.addEventListener('click', (event) => {
                 event.preventDefault();
-                window.location.href = target;
+                // Only if different
+                if (window.location.pathname !== target) {
+                    window.location.href = target;
+                }
             })
 
             // Select current

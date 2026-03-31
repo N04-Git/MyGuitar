@@ -28,3 +28,17 @@
         transform: scale(1);
     }
 }
+
+@keyframes breathingColor {
+    0% {
+        border-bottom-color: #323232a1;
+    }
+
+    50% {
+        border-bottom-color: rgba(255, 255, 255, 0.192);
+    }
+
+    100% {
+        border-bottom-color: #323232a1;
+    }
+}

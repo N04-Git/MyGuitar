@@ -14,7 +14,7 @@ main {
     height: 100%;
 }
 
-h1, h2, h3, h4, h5, p, label, li {
+h1, h2, h3, h4, h5, p, label, li, select, td, th, span {
     color: white;
     font-family: 'Open Sans';
     width: fit-content;
@@ -23,4 +23,25 @@ h1, h2, h3, h4, h5, p, label, li {
 ul {
     width: fit-content;
     padding-left: 16px;
+}
+
+select {
+    background-color: #c9c9c92e;;
+    border: 1px solid #a9a9b86e;;
+    border-radius: 5px;
+    padding: 2px 0 2px 4px;
+    background: rgb(100, 100, 100);
+}
+
+/* Overall Frame look */
+main > .frame {
+    display: flex;
+    background-color: rgba(97, 97, 97, 0.05);
+    padding: 5px 15px;
+    border: 1px solid #9393932e;
+    border-radius: 4px;
+}
+
+main > .frame > * {
+    margin: 7px;
 }
