@@ -1,0 +1,28 @@
+/* Exercises Page */
+main {
+    padding-top: 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Search */
+main .search {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+main .search #name {
+    width: 30%;
+}
+
+main .search #name input {
+    width: 100%;
+}
+
+/* Exercises */
+main .exercises {
+    flex: 1 1 auto;
+}

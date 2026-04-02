@@ -21,6 +21,9 @@
     </p>
     {% endblock %}
 
-    {% block js %}{% endblock %}
+    <!-- Settings -->
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+    {% block js %}
+    {% endblock %}
 </body>
 </html>

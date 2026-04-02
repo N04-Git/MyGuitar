@@ -1,6 +1,6 @@
 // Panels handler - Gamme Page
 
-// Elements
+// Input
 const gamme_input = document.querySelector('#gamme');
 const note_input = document.querySelector('#note');
 const architecture_table = document.querySelector('.architecture table')
@@ -17,6 +17,9 @@ const chart_controller = chords_frame.querySelector('.chart .wrapper')
 const chart_left_button = chords_frame.querySelector('#prev-chart');
 const chart_right_button = chords_frame.querySelector('#next-chart');
 const selected_chords_options = chords_frame.querySelector('.list .options');
+
+// Fretboard
+const fretboard_container = document.querySelector('#fretboard')
 
 // Constants / Variables
 const DEGREES = ["I", "II", "III", "IV", "V", "VI", "VII"]
@@ -47,6 +50,8 @@ let ACTIVE_CHORDS_SELECTION = {
     '9th': false,
     'Sus': false,
 };
+
+const PAGE_SETTINGS = getSettings('gamme');
 
 // Functions
 function render_architecture(notes, intervals) {
@@ -196,28 +201,12 @@ function render_chords(degrees) {
     }
 
     // Auto select first chord
-    if (chord_container.firstChild) {
-        chord_container.firstChild.click();
-    } else {
-        // Reset chart
-        chart_container.innerHTML = '';
-        chart_name.innerText = '';
-        chart_kind.innerText = '';
-        chart_feeling.innerText = '';
-        chart_structure.innerText = '';
-    }
-}
+    chord_container.firstChild.click();
 
-function sumList(list, start, end) {
-    counter = 0;
-    for (let i=start; i<end; i++) {
-        counter += list[i];
-    }
-    return counter;
 }
 
 function refresh_output () {
-    console.log('Refreshing...');
+    console.log('API CALL');
 
     // API Data
     param = {
@@ -225,7 +214,7 @@ function refresh_output () {
         'key':  note_input.value,
     }
     call_api('/key', param).then(response => {
-
+        // Update data
         current_key_data = response;
 
         // Architecture
@@ -233,7 +222,70 @@ function refresh_output () {
 
         // Clickable Chords
         render_chords(current_key_data.degrees_quality);
+
+        // Fretboard
+        render_fretboard_key();
+
     })
+
+    // Save settings
+    PAGE_SETTINGS['last_key'] = [gamme_input.value, note_input.value];
+    saveSettings(PAGE_SETTINGS, 'gamme');
+}
+
+function render_fretboard_key() {
+    const fretboard_data = current_key_data.fretboard_key
+
+    const fretboard_length = fretboard_data[0].frets.length
+
+    // Reset
+    fretboard_container.innerHTML = '';
+
+    // Create table
+    const t = document.createElement('table');
+    const t_head = document.createElement('thead');
+    const t_body = document.createElement('tbody');
+    t.append(t_head, t_body);
+    fretboard_container.append(t);
+
+    // Create each column
+    const t_rows = [];
+    for (let i=0; i<fretboard_length; i++) {
+        const tr = document.createElement('tr')
+        if (i===0) {
+            t_head.append(tr);
+        } else {
+            t_body.append(tr);
+        }
+        t_rows.push(tr);
+    }
+
+    // Fill each column
+    for (let i=0; i<fretboard_length; i++) {
+
+        fretboard_data.forEach( (row, j) => {
+            const row_type = row.type;
+            const cell = document.createElement('td');
+            if (row_type === 'header') {
+                // Header
+                cell.classList.add('header');
+                cell.textContent = row.frets[i];
+            } else if (row_type === 'row') {
+                // String
+                cell.classList.add('string');
+                cell.textContent = row.notes[i].name;
+
+                if (row.notes[i].highlight) {
+                    cell.classList.add('highlight');
+                }
+            }
+
+            t_rows[j].appendChild(cell);
+
+        })
+    }
+
+
 }
 
 function chart_arrow_clicked(isPrev) {
@@ -268,8 +320,14 @@ function chart_arrow_clicked(isPrev) {
 }
 
 function chord_selector_clicked(item) {
+    let c = 0;
+    Object.values(ACTIVE_CHORDS_SELECTION).forEach( v => {
+        if (v===true) { c++; }
+    })
+
     // Reverse
     const value = item.getAttribute('data-val');
+    if (c === 1 && ACTIVE_CHORDS_SELECTION[value]) { return }
     ACTIVE_CHORDS_SELECTION[value] = !ACTIVE_CHORDS_SELECTION[value];
 
     if (ACTIVE_CHORDS_SELECTION[value]) {
@@ -282,18 +340,19 @@ function chord_selector_clicked(item) {
     render_chords(current_key_data.degrees_quality);
 }
 
-
 // Events
 gamme_input.addEventListener('change', refresh_output);
 note_input.addEventListener('change', refresh_output);
 chart_left_button.addEventListener('click', () => {chart_arrow_clicked(true);})
 chart_right_button.addEventListener('click', () => {chart_arrow_clicked(false);})
 
+// Chord Filter Options
 Array.from(selected_chords_options.children).forEach( (child) => {
     child.addEventListener('click', function () {
         chord_selector_clicked(child);
     })
 })
+
 
 // Auto refresh on load
 refresh_output();

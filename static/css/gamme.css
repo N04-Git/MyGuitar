@@ -11,8 +11,6 @@ main {
 }
 
 main > .frame {
-    margin: 5px 0px;
-    width: 90%;
     flex-direction: column;
 }
 
@@ -30,11 +28,16 @@ main > .frame > .field > select {
 }
 
 main .frame.p1 {
-    height: 6%;
+    flex: 0 0 auto;
 }
 
 main .frame.p2 {
-    height: 86%;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+main .frame.p3 {
+    flex: 0 0 auto;
 }
 
 /* Frame - Output - Architecture */
@@ -68,16 +71,30 @@ td.xs {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    height: 100%;
+    min-height: 0;
 }
 
 /* Frame - Output - Chords - List (left) */
 .frame .chords .list {
     width: 60%;
+    height: 100%;
+    min-height: 0;
+    /* border: 1px solid white; */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .frame .chords .list .container {
+    min-height: 0;
+    height: 80%;
+    box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    overflow: auto;
 }
 
 .frame .chords .list .container .item {
@@ -85,6 +102,7 @@ td.xs {
     border: 1px solid rgb(78, 78, 78);
     margin: 4px;
     width: 70px;
+    height: 55px;
     border-radius: 4px;
     display: flex;
     flex-direction: column;
@@ -111,6 +129,8 @@ td.xs {
 }
 
 .frame .chords .list .options {
+    height: 20%;
+    box-sizing: border-box;
     border-bottom: 1px solid #84848482;
     display: flex;
     margin-bottom: 10px;
@@ -149,9 +169,11 @@ td.xs {
 /* Frame - Output - Chords - Chart (right) */
 .frame .chords .chart {
     width: 33%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .frame .chords .chart table {
@@ -271,7 +293,36 @@ td.xs {
     margin-top: 10px;
 }
 
-
 .frame .chords .chart .infos h4 {
     margin: 8px 0 5px 0;
+}
+
+/* Frame - Fretboard */
+
+#fretboard {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#fretboard table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#fretboard table thead tr td {
+    background-color: #505050a1;
+    border: 1px solid #8282825c;
+    border-radius: 4px;
+}
+
+#fretboard table tr td {
+    font-size: 1.4em;
+    width: 8.33%;
+}
+
+#fretboard table tbody tr td.highlight {
+background-color: #91858512;
+  border: 1px solid #afa9a9ba;
 }

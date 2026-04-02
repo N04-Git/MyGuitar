@@ -5,7 +5,7 @@ import re
 import os
 import copy
 import time
-from typing import List, Tuple, Type
+from typing import Tuple
 
 # TMP
 os.system('cls')
@@ -110,12 +110,22 @@ ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
 #### Classes
 
+class Exercise:
+    def __init__(self, category:str) -> None:
+        self.category = category
+
 class Note:
     def __init__(self, note:int|str) -> None:
+
+        self._name = ''
+        self.index = -1 # Can change over adjustements
+        self.interval = None # Can change over adjustements
+        self.highlight = 0 # No highlight by default
+        self.initial_interval = -1 # Unset by default
+
         if type(note) == str:
             self._name = note
             self.index = NOTES_ID_BY_NAME.get(note, [])[0]
-            self.interval = None
 
         elif type(note) == int:
             self.index = note
@@ -123,20 +133,13 @@ class Note:
             self.interval = list(INTERVALS.keys())[list(INTERVALS.values()).index(note % 12)]
 
         else:
-            print('Not definition error !', note)
-
-        self.highlight = 0
-        self.initial_interval = -1 # Unset by default
+            print('Note definition error !', note)
 
     @property
     def name(self):
         if self.highlight:
             return COLORS.get("GREEN", "") + self._name + COLORS.get("RESET", "")
         return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = value
 
     def getLetterNumber(self) -> int:
         return NOTES_ID_BY_NAME.get(self._name.removesuffix('#').removesuffix('b'), [0, 0])[1]
@@ -162,7 +165,13 @@ class Note:
         self.index = target_note_index
 
     def to_dict(self):
-        return {'name': self._name}
+        return {
+            'name': self._name,
+            'highlight': self.highlight,
+            'index': self.index,
+            'interval': self.interval,
+            'initial_interval': self.initial_interval
+        }
 
 class NotePosition:
     def __init__(self, string:int, fret:int) -> None:
@@ -474,6 +483,29 @@ class Key:
 
         return degrees_chords
 
+    def get_fretboard(self, length=13) -> list[list[Note]]:
+
+        # New fretboard, key notes
+        F = duplicate_fretboard(FRETBOARD)
+        N = self.get_notes()
+
+        # Fretboard length
+        index = len(F[0]) - length
+        if LEFT_HANDED:
+            F = [row[:length] for row in F]
+        else:
+            F = [row[index:] for row in F]
+
+        # Highlight all fretboard's notes in common
+        for row in F:
+            for noteObj in row:
+                n_id = noteObj.index % 12
+                for keyNote in N:
+                    if keyNote.index % 12 == n_id:
+                        noteObj.highlight = True
+
+        return F
+
     def to_dict(self) -> dict:
 
         notes = [n._name for n in self.get_notes()]
@@ -486,6 +518,7 @@ class Key:
             'sound': self.sound,
             'notes': notes,
             'degrees_quality': degrees,
+            'fretboard_key': fretboard_to_dict(self.get_fretboard())
         }
         return d
 
@@ -511,22 +544,6 @@ class HarmonicMinorKey(Key):
         self.name = "Harmonic Minor"
         self.altName = ""
         self.architecture = [2, 1, 2, 2, 1, 3, 1]
-
-class Exercise:
-    def __init__(self, name:str, key:Note, patterns:list[Pattern]=[], tempo=90) -> None:
-        self.name = name
-        self.key = key
-        self.patterns = patterns
-        self.tempo = tempo
-
-    def addPattern(self, pattern:Pattern):
-        self.patterns.append(pattern)
-
-    def play(self):
-        for pattern in self.patterns:
-            os.system('cls')
-            show_fretboard(pattern.apply())
-            time.sleep(1.0)
 
 class Chord_Major(Chord):
     def __init__(self, root_note:Note) -> None:
@@ -892,6 +909,7 @@ def show_fretboard(fretboard:list[list[Note]]):
     print(display)
 
 def fretboard_to_dict(fretboard: list[list[Note]]) -> list[dict]:
+    # Returns a dict containing
     result = []
 
     fret_width = len(fretboard[0])
@@ -914,10 +932,7 @@ def fretboard_to_dict(fretboard: list[list[Note]]) -> list[dict]:
         notes = list(row[::-1] if LEFT_HANDED else row)
 
         for note in notes:
-            row_data.append({
-                "note": note.name,
-                "highlight": getattr(note, "highlight", False)
-            })
+            row_data.append(note.to_dict())
 
         result.append({
             "type": "row",
@@ -953,6 +968,7 @@ def get_chart(chord_id: int) -> list:
     return []
 
 def fretboard_to_array(fretboard: list[list[Note]]) -> list[list[tuple[int, int]]]:
+    # Returns an array containing note's highlight and note's interval
     if LEFT_HANDED:
         array = [[(int(note.highlight), (note.initial_interval)) for note in reversed(row)] for row in fretboard]
     else:
@@ -963,10 +979,7 @@ def fretboard_to_array(fretboard: list[list[Note]]) -> list[list[tuple[int, int]
 
 if __name__ == '__main__':
 
-    mi = Chord_Minor(Note('Do#'))
-    charts = get_chart(mi.id)
+    myKey = IonanKey(Note('Do'))
 
-    for row in charts[0]:
-        for col in row:
-            print(col[1], end=' ')
-        print('')
+    if (myKey):
+        show_fretboard(myKey.get_fretboard())

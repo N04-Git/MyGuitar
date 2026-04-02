@@ -5,14 +5,48 @@
 
 <!-- CSS -->
 {% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/exercises.css') }}">
 {% endblock %}
 
 <!-- Content -->
 {% block content %}
     <main>
+        <!-- Search filters -->
+        <div class="frame search">
+            <!-- Name -->
+            <div class="input" id="name">
+                <input type="text" placeholder="Rechercher un exercice...">
+            </div>
+
+            <!-- Category -->
+            <div class="input" id="category">
+                <select>
+                    <option value="all">Tout</option>
+                    <option value="technique">Technique</option>
+                    <option value="scale">Gamme</option>
+                </select>
+            </div>
+
+            <!-- Sort -->
+            <div class="input" id="sort">
+                <select>
+                    <option value="last">Derniers ajouts</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Exercises -->
+        <div class="frame exercises">
+            <!-- JS Handling -->
+        </div>
+
     </main>
 {% endblock %}
 
 <!-- JS -->
 {% block js %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/exercises.js') }}"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/alphaTab.min.js"></script> -->
 {% endblock %}
+

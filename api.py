@@ -4,9 +4,12 @@ import guitar
 
 api_router = Blueprint('api', __name__, url_prefix='/api')
 
+ERROR_MISSING_ARGS = ('Error: missing argument(s)')
+
+
 @api_router.route('/')
 def api():
-    return jsonify("Welcome To MyGuitar's API !")
+    return jsonify("Welcome To MyGuitar's API ! >> https://myportfolio.ackernoa.fr <<")
 
 @api_router.route('/key', methods=['POST'])
 def key():
@@ -26,7 +29,7 @@ def key():
         return jsonify('Error: key not found')
 
     except KeyError:
-        return jsonify("Error: missing argument(s)")
+        return jsonify(ERROR_MISSING_ARGS)
 
 @api_router.route('/chart', methods=['POST'])
 def chart():
@@ -40,6 +43,22 @@ def chart():
             return jsonify(chart)
 
     except KeyError:
-        return jsonify("Error: missing argument(s)")
+        return jsonify(ERROR_MISSING_ARGS)
 
     return jsonify('API Error: Chart not found')
+
+@api_router.route('/exercises', methods=['POST'])
+def exercises():
+
+    data = request.get_json()
+    try:
+        exercise_prefix = data['name']
+        exercise_category = data['category']
+        exercise_sort = data['sort']
+
+        print(exercise_prefix, exercise_category, exercise_sort)
+
+        return jsonify('')
+
+    except KeyError:
+        return jsonify(ERROR_MISSING_ARGS)

@@ -1,5 +1,5 @@
 # Libraries
-from flask import Flask, render_template, Blueprint, jsonify, send_from_directory
+from flask import Flask, render_template, Blueprint, jsonify, send_file
 from api import api_router
 
 # App
@@ -25,6 +25,14 @@ def chords():
 @app.route('/practice')
 def practice():
     return render_template("exercises.html")
+
+@app.route('/tablatures')
+def tablatures():
+    return render_template("tablatures.html")
+
+@app.route('/classes')
+def cours():
+    return render_template("cours.html")
 
 # Run
 if __name__ == "__main__":
