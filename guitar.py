@@ -110,9 +110,60 @@ ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
 #### Classes
 
+class AlphaTex:
+    def __init__(self, tempo:int, notes:list[tuple[int, float|tuple[float, ...]]]) -> None:
+        self.tempo = tempo
+        self.notes = notes
+
+    def generate(self) -> str:
+        tex = f"""\\tempo {self.tempo}
+\\instrument guitar
+.\n
+"""
+        last_note_duration = None
+        current_measure = 0
+        for note in self.notes:
+            # Note duration
+            note_duration, note_pos = note
+            current_measure += 1/note_duration
+            if last_note_duration != note_duration:
+                tex += f':{note_duration} '
+                last_note_duration = note_duration
+
+            # Note pos
+            if isinstance(note_pos, tuple):
+                tex += f'({" ".join([f'{pos}' for pos in note_pos])}) '
+            else:
+                tex += f'{note_pos} '
+
+            if abs(current_measure - 1.0) < 1e-6:
+                current_measure = 0
+                tex += '| '
+
+        # Close
+        if current_measure > 0:
+            tex += '|'
+
+        return tex
+
 class Exercise:
-    def __init__(self, category:str) -> None:
+
+    exercises = []
+
+    def __init__(self, name:str, category:str, tablature:AlphaTex) -> None:
+        self.name = name
         self.category = category
+        self.alphaTex = tablature.generate()
+
+        Exercise.exercises.append(self)
+
+    def to_dict(self) -> dict:
+        d = {
+            'name': self.name,
+            'category': self.category,
+            'alphaTex': self.alphaTex,
+        }
+        return d
 
 class Note:
     def __init__(self, note:int|str) -> None:
@@ -967,6 +1018,15 @@ def get_chart(chord_id: int) -> list:
 
     return []
 
+def get_exercies(category:str, sorting:str, prefix:str) -> list:
+    # Get all exercises
+    exercises = [e.to_dict() for e in Exercise.exercises]
+
+    # Sort
+    pass
+
+    return exercises
+
 def fretboard_to_array(fretboard: list[list[Note]]) -> list[list[tuple[int, int]]]:
     # Returns an array containing note's highlight and note's interval
     if LEFT_HANDED:
@@ -977,9 +1037,43 @@ def fretboard_to_array(fretboard: list[list[Note]]) -> list[list[tuple[int, int]
 
 # # # # # # # # # # # # # # # # # #
 
+# Exercises #
+
+Exercise('Araignée', 'technique', AlphaTex(90, [
+    (4, 5.6), (4, 5.5), (4, 5.4), (4, 5.3), (4, 5.2), (4, 5.1),
+    (4, 6.6), (4, 6.5), (4, 6.4), (4, 6.3), (4, 6.2), (4, 6.1),
+    (4, 7.6), (4, 7.5), (4, 7.4), (4, 7.3), (4, 7.2), (4, 7.1),
+    (4, 8.6), (4, 8.5), (4, 8.4), (4, 8.3), (4, 8.2), (4, 8.1),
+]))
+
+Exercise('1-3-2-4', 'technique', AlphaTex(90, [
+    (4, 5.6), (4, 7.6), (4, 6.6), (4, 8.6),
+    (4, 5.5), (4, 7.5), (4, 6.5), (4, 8.5),
+    (4, 5.4), (4, 7.4), (4, 6.4), (4, 8.4),
+    (4, 5.3), (4, 7.3), (4, 6.3), (4, 8.3),
+]))
+
+Exercise('Alternate picking', 'technique', AlphaTex(110, [
+    (8, 5.1), (8, 7.1), (8, 5.1), (8, 7.1),
+    (8, 6.1), (8, 8.1), (8, 6.1), (8, 8.1),
+    (8, 7.1), (8, 9.1), (8, 7.1), (8, 9.1),
+]))
+
+Exercise('Chromatique', 'technique', AlphaTex(90, [
+    (4, 1.6), (4, 2.6), (4, 3.6), (4, 4.6),
+    (4, 1.5), (4, 2.5), (4, 3.5), (4, 4.5),
+    (4, 1.4), (4, 2.4), (4, 3.4), (4, 4.4),
+    (4, 1.3), (4, 2.3), (4, 3.3), (4, 4.3),
+]))
+
+Exercise('Accords simples', 'accords', AlphaTex(80, [
+    (4, (3.5, 2.4, 0.3)),
+    (4, (5.5, 4.4, 3.3)),
+    (4, (7.5, 6.4, 5.3)),
+    (4, (3.5, 2.4, 0.3)),
+]))
+
+# # # # # # # # # # # # # # # # # #
+
 if __name__ == '__main__':
-
-    myKey = IonanKey(Note('Do'))
-
-    if (myKey):
-        show_fretboard(myKey.get_fretboard())
+    pass

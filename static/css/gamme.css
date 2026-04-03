@@ -6,8 +6,6 @@ main {
     flex-direction: column;
     align-items: center;
     padding-top: 2%;
-    opacity: 0;
-    animation: fadeIn 2s ease 0.2s forwards;
 }
 
 main > .frame {

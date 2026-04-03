@@ -12,6 +12,8 @@ body {
 main {
     width: 80%;
     /* height: 100%; */
+    opacity: 0;
+    animation: fadeInFull 1s ease 0.2s forwards;
 }
 
 h1, h2, h3, h4, h5, p, label, li, select, td, th, span, input {

@@ -56,9 +56,9 @@ def exercises():
         exercise_category = data['category']
         exercise_sort = data['sort']
 
-        print(exercise_prefix, exercise_category, exercise_sort)
+        e = guitar.get_exercies(exercise_category, exercise_sort, exercise_prefix)
 
-        return jsonify('')
+        return jsonify(e)
 
     except KeyError:
         return jsonify(ERROR_MISSING_ARGS)
