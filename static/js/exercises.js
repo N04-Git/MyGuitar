@@ -6,13 +6,20 @@ const search_sort = document.querySelector('.search #sort select');
 
 const view = document.querySelector('#view');
 const view_back_btn = view.querySelector(".back-btn");
+const tab_viewport = view.querySelector('.tab-viewport')
+const tab_main = view.querySelector('.tab-main');
+const tab_restart = view.querySelector('#restart');
+const tab_mute = view.querySelector('#mute');
 
 // Globals
 PAGE_SETTINGS = getSettings('exercises');
+let isMuted = true;
+let isPlaying = false;
 
 // Functions
 
 function add_exercise(exercise) {
+
     const item = document.createElement('div');
     item.classList.add('item');
 
@@ -29,8 +36,48 @@ function add_exercise(exercise) {
         // Visible view
         view.classList.add('visible');
 
-        // Set title
+        // Clear tabs
+        isMuted = true;
+        isPlaying = false;
+        tab_main.innerHTML = '';
 
+        // Show tabs
+        const settings = {
+            file: 'api/gpfile/'+exercise.tabPath,
+            core: {
+                engine: 'svg'
+            },
+            player: {
+                enableCursor: true,
+                enablePlayer: true,
+                soundFont: 'https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/soundfont/sonivox.sf2',
+                scrollElement: tab_viewport,
+            },
+            display: {
+                resources: {
+                    mainGlyphColor: '#fff',       // numbers, symbols
+                    secondaryGlyphColor: '#ccc',  // less important symbols
+                    staffLineColor: '#666',
+                    barSeparatorColor: '#999',
+                    selectionColor: '#ff000067',
+                }
+            },
+            cursor: {
+                enable: true,
+                followCursor: true,
+                smoothScrolling: true,
+                color: '#00ff00',
+                alpha: 0.8
+            }
+        };
+
+        const api = new alphaTab.AlphaTabApi(tab_main, settings);
+        api.masterVolume = 0;
+
+        // Update commands
+        api.scoreLoaded.on( () => {
+            updateCommands(api);
+        })
 
     })
 
@@ -57,17 +104,52 @@ function refresh_exercises() {
 
 }
 
+function updateCommands(api) {
+    // Play
+    document.addEventListener('keydown', () => {
+        if (isPlaying) {
+            api.pause();
+        } else {
+            api.play();
+        }
+        isPlaying = !isPlaying;
+    })
+
+    tab_restart.onclick = () => {
+        api.stop();
+        isPlaying = false;
+        // Remove focus
+        tab_restart.blur();
+    }
+
+    tab_mute.onclick = () => {
+        if (isMuted) {
+            api.masterVolume = 1;
+            tab_mute.textContent = 'Mute';
+        } else {
+            api.masterVolume = 0;
+            tab_mute.textContent = 'Unmute';
+        }
+        isMuted = !isMuted;
+        // Remove focus
+        tab_mute.blur();
+    }
+
+}
+
 // Events
-search_name.addEventListener('change', () => {
+search_name.addEventListener('input', () => {
     const v = search_name.value;
     PAGE_SETTINGS.search['name'] = v;
     refresh_exercises();
 })
+
 search_category.addEventListener('change', () => {
     const v = search_category.value;
     PAGE_SETTINGS.search['category'] = v;
     refresh_exercises();
 })
+
 search_sort.addEventListener('change', () => {
     const v = search_sort.value;
     PAGE_SETTINGS.search['sort'] = v;

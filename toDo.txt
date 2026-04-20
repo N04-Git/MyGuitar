@@ -1,7 +1,5 @@
 
-Fretboard (with highlighted notes on Gamme page)
-Store last key settings (gamme page)
-Exercices page structure (exercises kind, searchbar, ...)
+Chords page :
 
 ____________________________
 

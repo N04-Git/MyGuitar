@@ -1,6 +1,6 @@
 # API Routes
-from flask import Blueprint, jsonify, request
-import guitar
+from flask import Blueprint, jsonify, request, send_file
+import guitar, exercises # type: ignore
 
 api_router = Blueprint('api', __name__, url_prefix='/api')
 
@@ -62,3 +62,7 @@ def exercises():
 
     except KeyError:
         return jsonify(ERROR_MISSING_ARGS)
+
+@api_router.route('/gpfile/<fname>')
+def get_gpfile(fname:str):
+    return send_file(f'gpfile\\{fname}')

@@ -80,8 +80,8 @@ main .exercises .item h4 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     transition: all 0.3s ease-in;
 }
 
@@ -91,27 +91,82 @@ main .exercises .item h4 {
 }
 
 #view .back-btn {
+    z-index: 3;
     opacity: 0.7;
     position: absolute;
     top: 1%;
     right: 1%;
-    border: 1px solid white;
+    border: 1px solid rgba(255, 255, 255, 0.199);
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    border-radius: 10px;
     transition: all 0.3s;
     cursor: pointer;
 }
 
 #view .back-btn:hover {
-    opacity: 1;
-    background-color: #7b7b7b8a;
+    opacity: 0.9;
+    border: 1px solid rgba(112, 17, 17, 0.301);
+    background-color: #50353538;
 }
 
 #view .back-btn img {
+    opacity: 0.4;
     height: 32px;
     filter: invert(1);
     margin: 7px;
+}
+
+#view .tab-container {
+    height: 100%;
+    display: flex;
+}
+
+#view .tab-viewport {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+}
+
+#view .tab-main {
+    min-height: 100%;
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+#view .tab-control {
+    opacity: 30%;
+    z-index: 2;
+    position: absolute;
+    bottom: 3%;
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+    width: fit-content;
+    gap: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(110, 110, 110, 0.452);
+    padding: 10px;
+    background-color: #06060629;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease-in-out;
+}
+
+#view .tab-control:hover {
+    opacity: 96%;
+    transform: translateX(-50%) scale(1.4);
+}
+
+/* Playbar visible */
+.at-cursor-beat {
+    background-color: rgba(255, 255, 255, 0.651);
+}
+
+.tab-container text {
+    fill: rgba(218, 218, 218, 0.849) !important;
 }

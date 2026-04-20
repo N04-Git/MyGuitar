@@ -16,7 +16,7 @@ main {
     animation: fadeInFull 1s ease 0.2s forwards;
 }
 
-h1, h2, h3, h4, h5, p, label, li, select, td, th, span, input {
+h1, h2, h3, h4, h5, p, label, li, select, td, th, span, input, button {
     color: white;
     font-family: 'Open Sans';
     width: fit-content;
@@ -28,15 +28,28 @@ ul {
 }
 
 select, input {
-    background-color: #c9c9c92e;;
-    border: 1px solid #a9a9b86e;;
+    background-color: #c9c9c92e;
+    border: 1px solid #a9a9b86e;
     border-radius: 5px;
     padding: 2px 0 2px 4px;
     background: rgb(100, 100, 100);
 }
 
 input {
-    border-color: #d4d4daf0;;
+    border-color: #d4d4daf0;
+}
+
+button {
+    border-color: #c9c9c926;
+    border-radius: 4px;
+    background-color: #c9c9c92e;
+    cursor: pointer;
+    min-width: 70px;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background-color: #9191919f;
 }
 
 /* Overall Frame look */

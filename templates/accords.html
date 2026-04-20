@@ -7,12 +7,14 @@
 {% block css %}
 {% endblock %}
 
+<!-- JS -->
+{% block js %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/accords.js') }}"></script>
+{% endblock %}
+
 <!-- Content -->
 {% block content %}
     <main>
     </main>
-{% endblock %}
-
-<!-- JS -->
-{% block js %}
 {% endblock %}
