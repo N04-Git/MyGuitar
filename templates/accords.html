@@ -5,6 +5,7 @@
 
 <!-- CSS -->
 {% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/accords.css') }}">
 {% endblock %}
 
 <!-- JS -->
@@ -16,5 +17,14 @@
 <!-- Content -->
 {% block content %}
     <main>
+        <!-- Search -->
+        <div class="search-frame frame">
+
+        </div>
+
+        <!-- View -->
+        <div class="view-frame frame">
+
+        </div>
     </main>
 {% endblock %}

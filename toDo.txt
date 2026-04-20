@@ -1,20 +1,19 @@
 
-Chords page :
+- GPFile : Accords : add other chords 
 
-____________________________
+- Chords page : design
 
-# MAJOR
-Chord_Major11,
-Chord_Major13,
-Chord_Add9,
+- Add new chords + shape :
+    Chord_Major11,
+    Chord_Major13,
+    Chord_Add9,
 
-# MINOR
-Chord_Minor13,
-Chord_MinorAdd9,
-Chord_MinorSus2,
-Chord_MinorSus4,
+    # MINOR
+    Chord_Minor13,
+    Chord_MinorAdd9,
+    Chord_MinorSus2,
+    Chord_MinorSus4,
 
-# DIMINISHED
-Chord_Dim7,
-Chord_HalfDim7,
-
+    # DIMINISHED
+    Chord_Dim7,
+    Chord_HalfDim7,

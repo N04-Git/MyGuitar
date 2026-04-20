@@ -1,1 +1,21 @@
 /* Exercises Page */
+
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Search */
+.search-frame {
+    height: 44%;
+    border: 1px solid blue;
+}
+
+/* View */
+.view-frame {
+    height: 55%;
+    border: 1px solid red;
+
+}
