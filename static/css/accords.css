@@ -9,13 +9,125 @@ main {
 
 /* Search */
 .search-frame {
-    height: 44%;
+    height: 30%;
     border: 1px solid blue;
+    flex-direction: column;
+}
+
+.search-frame .param {
+    flex: 1;
+    /* border: 1px solid white; */
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    justify-content: flex-start;
+}
+
+.search-frame .param #search {
+    width: 400px;
+    margin: 0 10px;
+}
+
+.search-frame .output {
+    flex: 1 0 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    /* border: 1px solid white; */
+    overflow: auto;
+    max-height: 80%;
+    box-sizing: border-box;
+    align-content: flex-start;
+}
+
+.search-frame .output .item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 84px;
+    height: 50px;
+    overflow: hidden;
+    margin: 5px;
+    border: 1px solid #736f6f66;
+    background-color: #3b3b3a70;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.search-frame .output .item:hover {
+    background-color: #3b3b3aa6;
 }
 
 /* View */
 .view-frame {
-    height: 55%;
+    height: 70%;
     border: 1px solid red;
+    flex-direction: column;
+    align-items: center;
+}
 
+/* General (top) */
+.view-frame .general {
+    display: flex;
+    flex-direction: row;
+    /* border: 1px solid white; */
+    width: 100%;
+    height: 50%;
+}
+
+.view-frame .general .wrapper {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    border: 1px solid white;
+}
+
+.view-frame .general .chart .left img, .view-frame .general .chart .right img {
+    width: 40px;
+    filter: invert(1);
+    opacity: 0.3;
+    position: relative;
+    left: 0px;
+}
+.view-frame .general .chart .right img {
+    transform: rotate(180deg);
+    right: 0px;
+}
+
+.view-frame .general .chart .left, .view-frame .general .chart .right {
+    border: 1px solid blue;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.view-frame .general .chart .left.visible, .view-frame .general .chart .right.visible {
+    pointer-events: all;
+    opacity: 1;
+}
+
+.view-frame .general .chart {
+    flex: 0 1 30%;
+    border: 1px solid white;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-frame .general h2, .view-frame .general h4 {
+    margin: 5px;
+}
+
+.view-frame .general #name {
+    margin-left: 40px;
+    margin-bottom: 17px;
+}
+
+/* Fretboard (bottom) */
+.view-frame #fretboard {
+    border: 1px solid white;
+    width: 100%;
+    height: 50%;
+    box-sizing: border-box;
 }

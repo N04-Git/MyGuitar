@@ -5,6 +5,7 @@
 }
 
 header {
+    flex: 0 0 20%;
     width: 20%;
     max-width: 206px;
     height: 100%;

@@ -10,7 +10,7 @@ body {
 }
 
 main {
-    width: 80%;
+    flex: 1 1 80%;
     /* height: 100%; */
     opacity: 0;
     animation: fadeInFull 1s ease 0.2s forwards;
@@ -32,11 +32,8 @@ select, input {
     border: 1px solid #a9a9b86e;
     border-radius: 5px;
     padding: 2px 0 2px 4px;
-    background: rgb(100, 100, 100);
-}
-
-input {
-    border-color: #d4d4daf0;
+    /* background: rgb(100, 100, 100); */
+    font-size: 1.2em;
 }
 
 button {
@@ -50,6 +47,29 @@ button {
 
 button:hover {
     background-color: #9191919f;
+}
+
+table {
+    border: 1px rgba(83, 83, 83, 0.3);
+    border-radius: 4px;
+    background-color: rgba(19, 19, 19, 0.15);
+    margin: 10px;
+}
+
+td, th {
+    font-size: 1.7em;
+    width: 90px;
+    box-sizing: border-box;
+    border: 1px solid #323232a1;
+    text-align: center;
+}
+
+th {
+    animation: breathingColor 5s infinite ease;
+}
+
+td.xs {
+    font-size: 1.3em;
 }
 
 /* Overall Frame look */
@@ -66,4 +86,87 @@ main > .frame {
 
 main > .frame > * {
     margin: 7px;
+}
+
+/* Overall Chart look */
+.chart table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    transform: translateY(-8%);
+}
+
+.chart table tr:first-child td {
+    border: none;
+}
+
+.chart table td:first-child {
+    border-left: none;
+}
+
+.chart table td.top {
+    border: 1px solid rgba(255, 255, 255, 0);
+    border-bottom: 1px solid #323232a1;
+    background-color: rgba(97, 97, 97, 0.05);
+}
+
+.chart table td {
+    width: min-content;
+    height: min-content;
+}
+
+.chart table td .cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+}
+
+.chart table td .cell p {
+    font-size: 0.5em;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    line-height: 149%;
+}
+
+.chart table td .cell.highlight {
+    transform: translateY(50%);
+}
+
+.chart table td .cell.highlight p {
+    border: 1px solid white;
+    border-radius: 50%;
+    width: 60%;
+    height: 60%;
+    background-color: #3f45504f;
+}
+
+/* Overall Fretboard look */
+#fretboard {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#fretboard table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#fretboard table thead tr td {
+    background-color: #505050a1;
+    border: 1px solid #8282825c;
+    border-radius: 4px;
+}
+
+#fretboard table tr td {
+    font-size: 1.4em;
+    width: 8.33%;
+}
+
+#fretboard table tbody tr td.highlight {
+background-color: #91858512;
+  border: 1px solid #afa9a9ba;
 }

@@ -324,119 +324,7 @@ class Pattern:
         f = self.apply(row_notes_limit)
         return fretboard_to_dict(f)
 
-class Chord:
-
-    _existing_chords = []
-    _id_counter = 0
-    _instances_by_id = {}
-
-    def __init_subclass__(cls, **kwargs) -> None:
-        super().__init_subclass__(**kwargs)
-        Chord._existing_chords.append(cls)
-
-    def __init__(self, root_note:Note) -> None:
-        self.rootNote = root_note
-        self.name = f"{root_note._name} "
-        self.structure = [] # Refers to Major Scale // Semitones
-        self.sound = ""
-        self.patterns: Tuple[Pattern, ...] = () # Chord chart
-        self.kind = 'UNSET' # Maj / Min / Dim / 7th / 6th
-
-        # ID
-        s = self.find_similar()
-        if s:
-            self.id = s.id
-        else:
-            self.id = self._id_counter
-            Chord._id_counter += 1
-            self._instances_by_id[self.id] = self
-
-    def find_similar(self) -> "Chord | None":
-        for chord in Chord._instances_by_id.values():
-            if (chord.__class__ is self.__class__ and
-                chord.rootNote._name == self.rootNote._name
-            ):
-                return chord
-        return None
-
-    def to_dict(self):
-        d = {
-            'name': self.name,
-            'root': self.rootNote.to_dict(),
-            'structure': self.structure,
-            'kind': self.kind,
-            'sound': self.sound,
-            'id': self.id,
-        }
-        return d
-
-    def get_chart(self, min_strings:int=6, min_frets:int=5) -> list[list[list]]:
-        charts = []
-
-        for p in self.patterns:
-            f = fretboard_to_array(p.apply())
-
-            # Exand frets by 3
-            for row in f:
-                for _ in range(3):
-                    row.append((0, -1))  
-
-            rows = len(f)
-            cols = len(f[0])
-
-            # Find bounding box of highlighted notes
-            min_row, max_row = rows, -1
-            min_col, max_col = cols, -1
-            for r in range(rows):
-                for c in range(cols):
-                    if f[r][c][0] != 0:
-                        if r < min_row: min_row = r
-                        if r > max_row: max_row = r
-                        if c < min_col: min_col = c
-                        if c > max_col: max_col = c
-
-            if max_row == -1:  # no notes
-                return []
-
-            # Initialize slice indices
-            start_row, end_row = min_row, max_row
-            start_col, end_col = min_col, max_col
-
-            # Pad columns to reach min_frets
-            while (end_col - start_col + 1) < min_frets:
-                # Alternate left/right
-                if (end_col - start_col + 1) % 2 == 0:
-                    # Try Left
-                    if start_col > 0:
-                        start_col -= 1
-                    else:
-                        end_col += 1
-                else:
-                    # Try Right
-                    if end_col < cols - 1:
-                        end_col += 1
-                    else:
-                        start_col -= 1
-
-            # Pad rows to reach min_strings
-            while (end_row - start_row + 1) < min_strings:
-                # Alternate top/bottom
-                if (end_row - start_row + 1) % 2 == 0:
-                    if start_row > 0:
-                        start_row -= 1
-                    else:
-                        end_row += 1
-                else:
-                    if end_row < rows - 1:
-                        end_row += 1
-                    else:
-                        start_row -= 1
-
-            # Slice the array
-            charts.append([row[start_col:end_col+1] for row in f[start_row:end_row+1]])
-
-        return charts
-
+# Keys
 class Key:
     def __init__(self, baseNote:Note) -> None:
 
@@ -595,6 +483,130 @@ class HarmonicMinorKey(Key):
         self.altName = ""
         self.architecture = [2, 1, 2, 2, 1, 3, 1]
 
+# Chords
+class Chord:
+
+    _existing_chords = []
+    _id_counter = 0
+    _instances_by_id = {}
+
+    def __init_subclass__(cls, **kwargs) -> None:
+        super().__init_subclass__(**kwargs)
+        Chord._existing_chords.append(cls)
+
+    def __init__(self, root_note:Note) -> None:
+        self.rootNote = root_note
+        self.name = f"{root_note._name} "
+        self.structure = [] # Refers to Major Scale // Semitones
+        self.sound = ""
+        self.patterns: Tuple[Pattern, ...] = () # Chord chart
+        self.kind = 'UNSET' # Maj / Min / Dim / 7th / 6th
+
+        # ID
+        s = self.find_similar()
+        if s:
+            self.id = s.id
+        else:
+            self.id = self._id_counter
+            Chord._id_counter += 1
+            self._instances_by_id[self.id] = self
+
+    def get_composing_notes(self) -> list[str]:
+        n = []
+        c = self.rootNote.index
+        for interval in self.structure:
+            next_note = Note(c + interval)
+            n.append(next_note._name)
+
+        return n
+
+    def find_similar(self) -> "Chord | None":
+        for chord in Chord._instances_by_id.values():
+            if (chord.__class__ is self.__class__ and
+                chord.rootNote._name == self.rootNote._name
+            ):
+                return chord
+        return None
+
+    def to_dict(self):
+        d = {
+            'name': self.name,
+            'root': self.rootNote.to_dict(),
+            'structure': self.structure,
+            'kind': self.kind,
+            'sound': self.sound,
+            'id': self.id,
+            'composing_notes': self.get_composing_notes(),
+        }
+        return d
+
+    def get_chart(self, min_strings:int=6, min_frets:int=5) -> list[list[list]]:
+        charts = []
+
+        for p in self.patterns:
+            f = fretboard_to_array(p.apply())
+
+            # Exand frets by 3
+            for row in f:
+                for _ in range(3):
+                    row.append((0, -1))  
+
+            rows = len(f)
+            cols = len(f[0])
+
+            # Find bounding box of highlighted notes
+            min_row, max_row = rows, -1
+            min_col, max_col = cols, -1
+            for r in range(rows):
+                for c in range(cols):
+                    if f[r][c][0] != 0:
+                        if r < min_row: min_row = r
+                        if r > max_row: max_row = r
+                        if c < min_col: min_col = c
+                        if c > max_col: max_col = c
+
+            if max_row == -1:  # no notes
+                return []
+
+            # Initialize slice indices
+            start_row, end_row = min_row, max_row
+            start_col, end_col = min_col, max_col
+
+            # Pad columns to reach min_frets
+            while (end_col - start_col + 1) < min_frets:
+                # Alternate left/right
+                if (end_col - start_col + 1) % 2 == 0:
+                    # Try Left
+                    if start_col > 0:
+                        start_col -= 1
+                    else:
+                        end_col += 1
+                else:
+                    # Try Right
+                    if end_col < cols - 1:
+                        end_col += 1
+                    else:
+                        start_col -= 1
+
+            # Pad rows to reach min_strings
+            while (end_row - start_row + 1) < min_strings:
+                # Alternate top/bottom
+                if (end_row - start_row + 1) % 2 == 0:
+                    if start_row > 0:
+                        start_row -= 1
+                    else:
+                        end_row += 1
+                else:
+                    if end_row < rows - 1:
+                        end_row += 1
+                    else:
+                        start_row -= 1
+
+            # Slice the array
+            charts.append([row[start_col:end_col+1] for row in f[start_row:end_row+1]])
+
+        return charts
+
 class Chord_Major(Chord):
     def __init__(self, root_note:Note) -> None:
         super().__init__(root_note)
@@ -654,7 +666,7 @@ class Chord_Major7(Chord):
         super().__init__(root_note)
         self.name += "Maj7"
         self.structure = [0, 4, 7, 11]
-        self.kind = "Maj7"
+        self.kind = "7th"
         self.sound = "Smooth / Jazzy"
         self.patterns = (
             # Pattern 1
@@ -1017,6 +1029,14 @@ def get_chart(chord_id: int) -> list:
 
     return []
 
+def get_chord_fretboard(chord_id:int):
+
+    # Find chord instance
+    chord = Chord._instances_by_id.get(chord_id, None)
+    if isinstance(chord, Chord):
+        return [fretboard_to_dict(f.apply()) for f in chord.patterns]
+    return []
+
 def get_exercies(category:str, sorting:str, prefix:str) -> list:
     # Get all exercises
     exercises = [e.to_dict() for e in Exercise.exercises]
@@ -1024,25 +1044,22 @@ def get_exercies(category:str, sorting:str, prefix:str) -> list:
     # Sort
     for e in exercises:
         # Check category
-        print(category, e['category'])
         if category != 'all':
             if category != e['category']:
                 continue
-        print('Category ok')
 
         # Check prefix
         if prefix.strip() != '':
             if not (prefix.lower().strip()) in str(e['name']).lower().strip():
                 continue
 
-        print('Prefix ok')
-
-        print(e)
         filtered.append(e)
 
     return filtered
 
 def fretboard_to_array(fretboard: list[list[Note]]) -> list[list[tuple[int, int]]]:
+    ## DEPRECATED (USED ONLY BY CHORD PATTERN...) >> USE 'fretboard_to_dict' instead
+
     # Returns an array containing note's highlight and note's interval
     if LEFT_HANDED:
         array = [[(int(note.highlight), (note.initial_interval)) for note in reversed(row)] for row in fretboard]
@@ -1050,7 +1067,35 @@ def fretboard_to_array(fretboard: list[list[Note]]) -> list[list[tuple[int, int]
         array = [[(int(note.highlight), (note.initial_interval)) for note in row] for row in fretboard]
     return array
 
+def get_chords(prefix:str, kind:str) -> list:
+    print('Searching chords : ', prefix, kind)
+
+    # Get all chords
+    chords_class = [chord for chord in Chord._existing_chords]
+    instances = []
+    for note in EXISTING_NOTES:
+        for c in chords_class:
+            root_note = Note(note)
+            instances.append(
+                c(root_note)
+            )
+
+    print(len(instances))
+
+    # Filter
+    filtered = []
+    for chord in instances:
+        # Check prefix
+        if prefix.strip() == '' or prefix.lower().strip() in chord.name.lower():
+            # Check kind
+            if kind == '' or kind == chord.kind:
+                filtered.append(chord.to_dict())
+
+    return filtered
+
 # # # # # # # # # # # # # # # # # #
 
 if __name__ == '__main__':
-    pass
+    c = Chord_9(Note('Mi')).get_composing_notes()
+    for n in c:
+        print(n)

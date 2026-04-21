@@ -21,23 +21,6 @@ const selected_chords_options = chords_frame.querySelector('.list .options');
 // Fretboard
 const fretboard_container = document.querySelector('#fretboard')
 
-// Constants / Variables
-const DEGREES = ["I", "II", "III", "IV", "V", "VI", "VII"]
-const INTERVALS = {
-    0: 'F',
-    1: '2m',
-    2: '2M',
-    3: '3m',
-    4: '3M',
-    5: '4J',
-    6: '5-',
-    7: '5J',
-    8: '6m',
-    9: '6M',
-    10: '7m',
-    11: '7M',
-}
-
 let MAX_CHART_NUMBER = 0;
 let CURRENT_CHART_NUMBER = 0;
 let CURRENT_CLICKED_CHORD = null;

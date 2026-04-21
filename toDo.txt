@@ -1,5 +1,6 @@
+- JS Organization : move fretboard rendering + chart rendering functions to dedicated JS file
 
-- GPFile : Accords : add other chords 
+- GPFile 'Accords' : add other chords
 
 - Chords page : design
 

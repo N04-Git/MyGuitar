@@ -8,23 +8,54 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/accords.css') }}">
 {% endblock %}
 
-<!-- JS -->
-{% block js %}
-<script src="{{ url_for('static', filename='js/api.js') }}"></script>
-<script src="{{ url_for('static', filename='js/accords.js') }}"></script>
-{% endblock %}
-
 <!-- Content -->
 {% block content %}
     <main>
         <!-- Search -->
         <div class="search-frame frame">
+            <div class="param">
+                <input id="search" type="text" placeholder="Rechercher un accord">
+                <select id="kind">
+                    <option value="">Tout</option>
+                    <option value="Majeur">Majeur</option>
+                    <option value="Mineur">Mineur</option>
+                    <option value="6th">6ème</option>
+                    <option value="7th">7ème</option>
+                    <option value="9th">9ème</option>
+                    <option value="Sus">Suspendu</option>
+                    <option value="Dim">Diminué</option>
+                </select>
+            </div>
 
+            <div class="output"></div>
         </div>
 
         <!-- View -->
         <div class="view-frame frame">
+            <div class="general">
+                <div class="wrapper">
+                    <h2 id="name"></h4>
+                    <h4 id="compo"></h4>
+                    <h4 id="kind"></h4>
+                    <h4 id="feeling"></h4>
+                </div>
+                <div class="chart">
+                    <div class="left"><img src="{{ url_for('static', filename='images/ui/left_arrow.png') }}" alt="prev"></div>
+                    <div class="container"></div>
+                    <div class="right"><img src="{{ url_for('static', filename='images/ui/left_arrow.png') }}" alt="next"></div>
+                </div>
+            </div>
+
+            <div id="fretboard">
+            </div>
 
         </div>
     </main>
+{% endblock %}
+
+<!-- JS -->
+{% block js %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/music.js') }}"></script>
+<script src="{{ url_for('static', filename='js/accords.js') }}"></script>
 {% endblock %}

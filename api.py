@@ -66,3 +66,31 @@ def exercises():
 @api_router.route('/gpfile/<fname>')
 def get_gpfile(fname:str):
     return send_file(f'gpfile\\{fname}')
+
+@api_router.route('/chords', methods=['POST'])
+def get_chords():
+
+    data = request.get_json()
+    try:
+        # Param
+        chord_prefix = data['prefix']
+        chord_kind = data['kind']
+
+        # Get chords from param
+        found_chords = guitar.get_chords(chord_prefix, chord_kind)
+
+        # Return
+        return jsonify(found_chords)
+    except KeyError:
+        return jsonify(ERROR_MISSING_ARGS)
+
+@api_router.route('/fretboard', methods=['POST'])
+def get_fretboard():
+    data = request.get_json()
+    try:
+        # Param
+        chord_id = data['chord_id']
+        return jsonify(guitar.get_chord_fretboard(chord_id))
+
+    except KeyError:
+        return jsonify(ERROR_MISSING_ARGS)
