@@ -95,13 +95,12 @@ function refresh_exercises() {
         // Reset
         exercises_container.innerHTML = '';
         exercises.forEach(exo => {
-            add_exercise(exo)
+            add_exercise(exo);
         });
     })
 
     // Save settings
     saveSettings(PAGE_SETTINGS, 'exercises')
-
 }
 
 function updateCommands(api) {

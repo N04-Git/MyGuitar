@@ -71,63 +71,78 @@ main {
 .view-frame .general {
     display: flex;
     flex-direction: row;
-    /* border: 1px solid white; */
+    flex: 1;
     width: 100%;
-    height: 50%;
 }
 
 .view-frame .general .wrapper {
     display: flex;
     flex: 1;
     flex-direction: column;
-    border: 1px solid white;
+    align-items: center;
+    justify-content: flex-start;
 }
 
-.view-frame .general .chart .left img, .view-frame .general .chart .right img {
-    width: 40px;
-    filter: invert(1);
-    opacity: 0.3;
-    position: relative;
-    left: 0px;
-}
-.view-frame .general .chart .right img {
-    transform: rotate(180deg);
-    right: 0px;
-}
-
-.view-frame .general .chart .left, .view-frame .general .chart .right {
-    border: 1px solid blue;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.view-frame .general .chart .left.visible, .view-frame .general .chart .right.visible {
-    pointer-events: all;
-    opacity: 1;
+.view-frame .general #name {
+    margin-bottom: 17px;
+    font-style: italic;
 }
 
 .view-frame .general .chart {
-    flex: 0 1 30%;
-    border: 1px solid white;
+    flex: 0 0 fit-content;
     overflow: auto;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.view-frame .general .chart .container {
+    margin: 10px;
+}
+
+.view-frame .general .chart .arrow img {
+    width: 32px;
+    filter: invert(1);
+    opacity: 0.3;
+    position: relative;
+    left: 0px;
+}
+
+.view-frame .general .chart .right img {
+    transform: rotate(180deg);
+    right: 0px;
+}
+
+.view-frame .general .chart .arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border: 1px solid rgba(155, 155, 155, 0.315);
+    border-radius: 100%;
+    background-color: #4e4e4e41;
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-frame .general .chart .arrow:hover {
+    background-color: #3b3b3a9f;
+}
+
+.view-frame .general .chart > div.visible {
+    pointer-events: all;
+    opacity: 1;
+}
+
 .view-frame .general h2, .view-frame .general h4 {
     margin: 5px;
 }
 
-.view-frame .general #name {
-    margin-left: 40px;
-    margin-bottom: 17px;
-}
-
 /* Fretboard (bottom) */
 .view-frame #fretboard {
-    border: 1px solid white;
     width: 100%;
-    height: 50%;
+    height: fit-content;
     box-sizing: border-box;
 }

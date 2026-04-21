@@ -1,0 +1,91 @@
+/* Tablatures - CSS */
+main {
+    padding-top: 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Search */
+main .search {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+main .search #name {
+    width: 40%;
+}
+
+main .search #name input {
+    width: 100%;
+}
+
+/* Exercises */
+main .tablatures {
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: center;
+}
+
+main .tablatures .item {
+    display: flex;
+    flex-direction: row;
+    height: 44px;
+    width: 96%;
+    padding: 5px 8px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 2px;
+    border: 1px solid #84848442;
+    background-color: #3f3f3f42;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+main .tablatures .item:hover {
+    border-color: #84848475;
+    background-color: #3f3f3f96;
+}
+
+main .tablatures .item:hover h4 {
+    transform: translateX(15px);
+}
+
+main .tablatures .item h3 {
+    margin: 5px;
+}
+
+main .tablatures .item h4 {
+    opacity: 0.7;
+    margin: 0;
+    width: 20%;
+    text-transform: uppercase;
+    font-style: italic;
+    font-size: 0.9em;
+    border-left: 1px solid rgb(138, 138, 138);
+    padding-left: 15px;
+    transition: all 0.2s ease-out;
+}
+
+main .tablatures .item button {
+    background-color: #5d5d5d2e;
+    border-color: #73737326;
+}
+
+main .tablatures .item button:hover {
+    border-color: #90cae15e;
+}
+
+main .tablatures .item button:hover img {
+    transform: translateY(2px);
+}
+
+main .tablatures .item button img {
+    padding-top: 3px;
+    width: 26px;
+    filter: invert(1);
+    transition: all 0.2s ease;
+}

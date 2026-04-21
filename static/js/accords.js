@@ -164,6 +164,12 @@ function search_chords() {
         response.forEach(element => {
             render_chord_item(element)
         });
+
+        // Check if only 1 element
+        if (response.length === 1) {
+            // Auto click element
+            result_container.lastChild.click();
+        }
     })
 }
 

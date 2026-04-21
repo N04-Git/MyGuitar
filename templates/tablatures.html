@@ -1,0 +1,41 @@
+{% extends "_base.html" %}
+
+<!-- Title -->
+{% block title %}MyGuitar - Tabs{% endblock %}
+
+<!-- CSS -->
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tablatures.css') }}">
+{% endblock %}
+
+<!-- Content -->
+{% block content %}
+    <main>
+        <!-- Search filters -->
+        <div class="frame search">
+            <!-- Name -->
+            <div class="input" id="name">
+                <input type="text" placeholder="Rechercher une tablature...">
+            </div>
+
+            <!-- Sort -->
+            <div class="input" id="sort">
+                <select>
+                    <option value="last">Derniers ajouts</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Exercises -->
+        <div class="frame tablatures">
+            <!-- JS Handling -->
+        </div>
+
+    </main>
+{% endblock %}
+
+<!-- JS -->
+{% block js %}
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tablatures.js') }}"></script>
+{% endblock %}

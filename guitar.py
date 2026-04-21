@@ -4,8 +4,10 @@
 import re
 import os
 import copy
-import time
 from typing import Tuple
+import pathlib
+import zipfile
+import xml.etree.ElementTree as ET
 
 # TMP
 os.system('cls')
@@ -110,42 +112,6 @@ ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
 #### Classes
 
-class AlphaTex:
-    def __init__(self, tempo:int, notes:list[tuple[int, float|tuple[float, ...]]]) -> None:
-        self.tempo = tempo
-        self.notes = notes
-
-    def generate(self) -> str:
-        tex = f"""\\tempo {self.tempo}
-\\instrument guitar
-.\n
-"""
-        last_note_duration = None
-        current_measure = 0
-        for note in self.notes:
-            # Note duration
-            note_duration, note_pos = note
-            current_measure += 1/note_duration
-            if last_note_duration != note_duration:
-                tex += f':{note_duration} '
-                last_note_duration = note_duration
-
-            # Note pos
-            if isinstance(note_pos, tuple):
-                tex += f'({" ".join([f'{pos}' for pos in note_pos])}) '
-            else:
-                tex += f'{note_pos} '
-
-            if abs(current_measure - 1.0) < 1e-6:
-                current_measure = 0
-                tex += '| '
-
-        # Close
-        if current_measure > 0:
-            tex += '|'
-
-        return tex
-
 class Exercise:
 
     exercises = []
@@ -153,7 +119,7 @@ class Exercise:
     def __init__(self, name:str, category:str, tablature:str) -> None:
         self.name = name
         self.category = category
-        self.tablaturePath = tablature
+        self.tablaturePath = 'exercises\\' + tablature
         Exercise.exercises.append(self)
 
     def to_dict(self) -> dict:
@@ -324,165 +290,6 @@ class Pattern:
         f = self.apply(row_notes_limit)
         return fretboard_to_dict(f)
 
-# Keys
-class Key:
-    def __init__(self, baseNote:Note) -> None:
-
-        if not isinstance(baseNote, Note):
-            raise ValueError('Cannot instanciate from this value : ', baseNote)
-
-        self.baseNote = baseNote
-        self.name = "DEFAULT NAME VALUE"
-        self.architecture = []
-        self.sound = "DEFAULT SOUND VALUE"
-
-    def get_notes(self) -> list[Note]:
-        n = [self.baseNote]
-
-        # print(f"ACTUAL : {self.baseNote.index} ({self.baseNote.name})")
-
-        for i in range(len(self.architecture)-1):
-            # I, II, III, IV, V, VI, ... = i+1
-            # num : note index + architecture (e.g: 3 + 0.5)
-
-            # Current
-            current_note = n[-1]
-            current_index = current_note.index
-            current_letter = current_note.getLetterNumber()
-
-            # Target
-            target_letter = current_letter + 1
-            if target_letter == 8:
-                target_letter = 1
-
-            target_index = (current_index + self.architecture[i])
-
-            if target_index > 12:
-                target_index %= 12
-
-            next_note = Note(LETTERS.get(target_letter, ""))
-
-            # Adjust
-            # print(f"ACTUAL : {next_note.index} ({next_note.name}) >> TARGET : {target_index} ({NOTES[target_index%12]}) ({target_index} - {next_note.index} = {target_index - next_note.index})")
-
-            next_note.adjustName(target_index) # Adjust letter to target note index
-
-            n.append(next_note)
-
-        return n
-
-    def get_degrees_quality(self) -> list[tuple[Chord]]:
-        scale_notes = self.get_notes()
-        # Calculate each degree's quality based on the scale's architecture
-        degrees = []
-        for i in range(len(self.architecture)):
-            fd = i
-            third = (i+2)
-            fith = (i+4)
-            i3 = get_interval(self.architecture, fd, third)
-            i5 = get_interval(self.architecture, third, fith)
-            # print(f"{fd} >>{i3}<< {third} >>{i5}<< {fith}")
-
-            if i3 == 2.0 and i5 == 1.5:
-                quality = MAJOR_CHORDS
-            elif i3 == 1.5 and i5 == 2:
-                quality = MINOR_CHORDS
-            elif i3 == 1.5 and i5 == 1.5:
-                quality = DIMINISHED_CHORDS
-            else:
-                print('Unknown interval :', i3, i5)
-                quality = []
-
-            instances = tuple(c(scale_notes[i]) for c in quality)
-            degrees.append(instances)
-
-        return degrees
-
-    def build_chord(self, degree:int) -> tuple[Chord]:
-        if not (1 <= degree <= 7):
-            raise ValueError("Degree out of range (1-7) :", degree)
-
-        list_of_chords = self.get_degrees_quality()
-
-        return list_of_chords[degree-1]
-
-    def get_all_chords(self) -> list[list[Chord]]:
-        """
-        Returns : list of 7 degrees, each degree containing all the associated chords
-        """
-        degrees_chords = []
-
-        for degree_i in range(1, len(self.architecture)+1):
-            # Number of notes = number of intervals in the architecture
-            degrees_chords.append(
-                self.build_chord(degree_i)
-            )
-            # print('Getting chords of degree : ', degree_i)
-
-        return degrees_chords
-
-    def get_fretboard(self, length=13) -> list[list[Note]]:
-
-        # New fretboard, key notes
-        F = duplicate_fretboard(FRETBOARD)
-        N = self.get_notes()
-
-        # Fretboard length
-        index = len(F[0]) - length
-        if LEFT_HANDED:
-            F = [row[:length] for row in F]
-        else:
-            F = [row[index:] for row in F]
-
-        # Highlight all fretboard's notes in common
-        for row in F:
-            for noteObj in row:
-                n_id = noteObj.index % 12
-                for keyNote in N:
-                    if keyNote.index % 12 == n_id:
-                        noteObj.highlight = True
-
-        return F
-
-    def to_dict(self) -> dict:
-
-        notes = [n._name for n in self.get_notes()]
-        degrees = [[chord.to_dict() for chord in degree] for degree in self.get_degrees_quality()]
-
-        d = {
-            'baseNote': self.baseNote._name,
-            'name': self.name,
-            'architecture': self.architecture,
-            'sound': self.sound,
-            'notes': notes,
-            'degrees_quality': degrees,
-            'fretboard_key': fretboard_to_dict(self.get_fretboard())
-        }
-        return d
-
-class IonanKey(Key):
-    def __init__(self, baseNote) -> None:
-        super().__init__(baseNote)
-        self.name = "Ionan"
-        self.altName = "Major"
-        self.architecture = [2, 2, 1, 2, 2, 2, 1]
-        self.sound = "Happy, Bright, Stable"
-
-class AeolianKey(Key):
-    def __init__(self, baseNote) -> None:
-        super().__init__(baseNote)
-        self.name = "Aeolian Key"
-        self.altName = "Natural Minor"
-        self.architecture = [2, 1, 2, 2, 1, 2, 2]
-        self.sound = "Sad"
-
-class HarmonicMinorKey(Key):
-    def __init__(self, baseNote) -> None:
-        super().__init__(baseNote)
-        self.name = "Harmonic Minor"
-        self.altName = ""
-        self.architecture = [2, 1, 2, 2, 1, 3, 1]
-
 # Chords
 class Chord:
 
@@ -573,6 +380,7 @@ class Chord:
             start_col, end_col = min_col, max_col
 
             # Pad columns to reach min_frets
+            counter = 0
             while (end_col - start_col + 1) < min_frets:
                 # Alternate left/right
                 if (end_col - start_col + 1) % 2 == 0:
@@ -588,7 +396,12 @@ class Chord:
                     else:
                         start_col -= 1
 
+                counter += 1
+                if counter > 100:
+                    raise ValueError('Error: chart cannot be created (1)')
+
             # Pad rows to reach min_strings
+            counter = 0
             while (end_row - start_row + 1) < min_strings:
                 # Alternate top/bottom
                 if (end_row - start_row + 1) % 2 == 0:
@@ -601,6 +414,10 @@ class Chord:
                         end_row += 1
                     else:
                         start_row -= 1
+
+                counter += 1
+                if counter > 100:
+                    raise ValueError('Error: chart cannot be created (2)')
 
             # Slice the array
             charts.append([row[start_col:end_col+1] for row in f[start_row:end_row+1]])
@@ -881,6 +698,179 @@ class Chord_Diminished(Chord):
             ])),
         )
 
+"""
+        >> Chord Template <<
+
+class Chord_MinorSus2(Chord):
+    def __init__(self, root_note: Note) -> None:
+        super().__init__(root_note)
+        self.name += ""
+        self.kind = ""
+        self.structure = []
+        self.sound = ""
+        self.patterns = (
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['']),
+                NotePosition(2, INTERVALS['']),
+                NotePosition(3, INTERVALS['']),
+                NotePosition(4, INTERVALS['']),
+            ])),
+        )
+"""
+
+
+# Keys
+class Key:
+    def __init__(self, baseNote:Note) -> None:
+
+        if not isinstance(baseNote, Note):
+            raise ValueError('Cannot instanciate from this value : ', baseNote)
+
+        self.baseNote = baseNote
+        self.name = "DEFAULT NAME VALUE"
+        self.architecture = []
+        self.sound = "DEFAULT SOUND VALUE"
+
+    def get_notes(self) -> list[Note]:
+        n = [self.baseNote]
+
+        # print(f"ACTUAL : {self.baseNote.index} ({self.baseNote.name})")
+
+        for i in range(len(self.architecture)-1):
+            # I, II, III, IV, V, VI, ... = i+1
+            # num : note index + architecture (e.g: 3 + 0.5)
+
+            # Current
+            current_note = n[-1]
+            current_index = current_note.index
+            current_letter = current_note.getLetterNumber()
+
+            # Target
+            target_letter = current_letter + 1
+            if target_letter == 8:
+                target_letter = 1
+
+            target_index = (current_index + self.architecture[i])
+
+            if target_index > 12:
+                target_index %= 12
+
+            next_note = Note(LETTERS.get(target_letter, ""))
+
+            # Adjust
+            # print(f"ACTUAL : {next_note.index} ({next_note.name}) >> TARGET : {target_index} ({NOTES[target_index%12]}) ({target_index} - {next_note.index} = {target_index - next_note.index})")
+
+            next_note.adjustName(target_index) # Adjust letter to target note index
+
+            n.append(next_note)
+
+        return n
+
+    def get_degrees_quality(self) -> list[tuple[Chord]]:
+        scale_notes = self.get_notes()
+        # Calculate each degree's quality based on the scale's architecture
+        degrees = []
+        for i in range(len(self.architecture)):
+            fd = i
+            third = (i+2)
+            fith = (i+4)
+            i3 = get_interval(self.architecture, fd, third)
+            i5 = get_interval(self.architecture, third, fith)
+            # print(f"{fd} >>{i3}<< {third} >>{i5}<< {fith}")
+
+            if i3 == 2.0 and i5 == 1.5:
+                quality = MAJOR_CHORDS
+            elif i3 == 1.5 and i5 == 2:
+                quality = MINOR_CHORDS
+            elif i3 == 1.5 and i5 == 1.5:
+                quality = DIMINISHED_CHORDS
+            else:
+                print('Unknown interval :', i3, i5)
+                quality = []
+
+            instances = tuple(c(scale_notes[i]) for c in quality)
+            degrees.append(instances)
+
+        return degrees
+
+    def build_chord(self, degree:int) -> tuple[Chord]:
+        if not (1 <= degree <= 7):
+            raise ValueError("Degree out of range (1-7) :", degree)
+
+        list_of_chords = self.get_degrees_quality()
+
+        return list_of_chords[degree-1]
+
+    def get_all_chords(self) -> list[list[Chord]]:
+        """
+        Returns : list of 7 degrees, each degree containing all the associated chords
+        """
+        degrees_chords = []
+
+        for degree_i in range(1, len(self.architecture)+1):
+            # Number of notes = number of intervals in the architecture
+            degrees_chords.append(
+                self.build_chord(degree_i)
+            )
+            # print('Getting chords of degree : ', degree_i)
+
+        return degrees_chords
+
+    def get_fretboard(self, length=13) -> list[list[Note]]:
+
+        # New fretboard, key notes
+        F = duplicate_fretboard(FRETBOARD)
+        N = self.get_notes()
+
+        # Fretboard length
+        index = len(F[0]) - length
+        if LEFT_HANDED:
+            F = [row[:length] for row in F]
+        else:
+            F = [row[index:] for row in F]
+
+        # Highlight all fretboard's notes in common
+        for row in F:
+            for noteObj in row:
+                n_id = noteObj.index % 12
+                for keyNote in N:
+                    if keyNote.index % 12 == n_id:
+                        noteObj.highlight = True
+
+        return F
+
+    def to_dict(self) -> dict:
+
+        notes = [n._name for n in self.get_notes()]
+        degrees = [[chord.to_dict() for chord in degree] for degree in self.get_degrees_quality()]
+
+        d = {
+            'baseNote': self.baseNote._name,
+            'name': self.name,
+            'architecture': self.architecture,
+            'sound': self.sound,
+            'notes': notes,
+            'degrees_quality': degrees,
+            'fretboard_key': fretboard_to_dict(self.get_fretboard())
+        }
+        return d
+
+class IonanKey(Key):
+    def __init__(self, baseNote) -> None:
+        super().__init__(baseNote)
+        self.name = "Ionan"
+        self.altName = "Major"
+        self.architecture = [2, 2, 1, 2, 2, 2, 1]
+        self.sound = "Happy, Bright, Stable"
+
+class AeolianKey(Key):
+    def __init__(self, baseNote) -> None:
+        super().__init__(baseNote)
+        self.name = "Aeolian Key"
+        self.altName = "Natural Minor"
+        self.architecture = [2, 1, 2, 2, 1, 2, 2]
+        self.sound = "Sad"
+
 # FRETBOARD
 FRETBOARD_LENGTH = 20
 FRETBOARD = [
@@ -1068,8 +1058,6 @@ def fretboard_to_array(fretboard: list[list[Note]]) -> list[list[tuple[int, int]
     return array
 
 def get_chords(prefix:str, kind:str) -> list:
-    print('Searching chords : ', prefix, kind)
-
     # Get all chords
     chords_class = [chord for chord in Chord._existing_chords]
     instances = []
@@ -1079,8 +1067,6 @@ def get_chords(prefix:str, kind:str) -> list:
             instances.append(
                 c(root_note)
             )
-
-    print(len(instances))
 
     # Filter
     filtered = []
@@ -1093,9 +1079,62 @@ def get_chords(prefix:str, kind:str) -> list:
 
     return filtered
 
+def parse_gpfile(gpfile_path:pathlib.Path) -> dict:
+    try:
+        with zipfile.ZipFile(gpfile_path, 'r') as z:
+            with z.open('Content/score.gpif') as f:
+                tree = ET.parse(f)
+                root = tree.getroot()
+
+                score = root.find('Score')
+                if score is None:
+                    return {}
+
+                def get(tag):
+                    el = score.find(tag)
+                    return el.text.strip() if el is not None and el.text else None
+
+                return {
+                    "title": get("Title"),
+                    "subtitle": get("SubTitle"),
+                    "artist": get("Artist"),
+                    "album": get("Album"),
+                    "words": get("Words"),
+                    "music": get("Music"),
+                    "words_and_music": get("WordsAndMusic"),
+                    "tabber": get("Tabber"),
+                    "copyright": get("Copyright"),
+                    "filepath": str('/gpfile/tabs/'+gpfile_path.name),
+                }
+
+    except Exception as e:
+        print(f"Error parsing {gpfile_path}: {e}")
+        return {}
+
+def get_tabs(prefix:str, sort:str) -> list:
+    results = []
+
+    tabsPath = pathlib.Path("./gpfile/tabs")
+
+    if not tabsPath.exists():
+        print('Error: tabs path does not exist !')
+        return []
+
+    files = [x for x in tabsPath.glob('**/*') if x.is_file()]
+
+    for f in files:
+        s = parse_gpfile(f)
+
+        p = prefix.strip().lower()
+        haystack = f"{s.get('title') or ''} {s.get('artist') or ''}".lower()
+
+        if not p or p in haystack:
+            results.append(s)
+
+    return results
+
 # # # # # # # # # # # # # # # # # #
 
 if __name__ == '__main__':
-    c = Chord_9(Note('Mi')).get_composing_notes()
-    for n in c:
-        print(n)
+    t = get_tabs('Ali', '')
+    print(t)

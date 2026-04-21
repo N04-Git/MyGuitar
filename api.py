@@ -1,6 +1,7 @@
 # API Routes
-from flask import Blueprint, jsonify, request, send_file
+from flask import Blueprint, jsonify, request, send_file, send_from_directory, abort
 import guitar, exercises # type: ignore
+import os
 
 api_router = Blueprint('api', __name__, url_prefix='/api')
 
@@ -63,9 +64,17 @@ def exercises():
     except KeyError:
         return jsonify(ERROR_MISSING_ARGS)
 
-@api_router.route('/gpfile/<fname>')
-def get_gpfile(fname:str):
-    return send_file(f'gpfile\\{fname}')
+@api_router.route('/gpfile/<kind>/<fname>')
+def get_gpfile(kind:str, fname:str):
+    if kind not in ["exercises", "tabs"]:
+        return "INVALID PATH", 400
+
+    folder = os.path.join(os.path.abspath("gpfile"), kind)
+
+    try:
+        return send_from_directory(folder, fname, as_attachment=True)
+    except FileNotFoundError:
+        return "File Not Found", 404
 
 @api_router.route('/chords', methods=['POST'])
 def get_chords():
@@ -91,6 +100,21 @@ def get_fretboard():
         # Param
         chord_id = data['chord_id']
         return jsonify(guitar.get_chord_fretboard(chord_id))
+
+    except KeyError:
+        return jsonify(ERROR_MISSING_ARGS)
+
+@api_router.route('/tabs', methods=['POST'])
+def get_tabs():
+
+    data = request.get_json()
+    try:
+        tabs_prefix = data['text']
+        tabs_sort = data['sort']
+
+        # Find tabs
+        t = guitar.get_tabs(tabs_prefix, tabs_sort)
+        return jsonify(t)
 
     except KeyError:
         return jsonify(ERROR_MISSING_ARGS)

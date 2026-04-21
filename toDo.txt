@@ -1,8 +1,4 @@
-- JS Organization : move fretboard rendering + chart rendering functions to dedicated JS file
-
-- GPFile 'Accords' : add other chords
-
-- Chords page : design
+- GPFile : Accords : add other chords
 
 - Add new chords + shape :
     Chord_Major11,
@@ -17,4 +13,8 @@
 
     # DIMINISHED
     Chord_Dim7,
-    Chord_HalfDim7,
+    Chord_HalfDim7
+
+- Cours page : design
+
+- Update favicon
