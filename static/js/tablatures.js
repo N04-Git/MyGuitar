@@ -28,7 +28,6 @@ function add_tablature(tablature) {
 
     download_btn.onclick = () => {
         // Trigger download
-        console.log(tablature.filepath);
         const a = document.createElement('a');
         a.href = "/api/" + tablature.filepath;
         document.body.appendChild(a);

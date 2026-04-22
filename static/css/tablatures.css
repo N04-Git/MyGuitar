@@ -71,8 +71,8 @@ main .tablatures .item h4 {
 }
 
 main .tablatures .item button {
-    background-color: #5d5d5d2e;
-    border-color: #73737326;
+    background-color: transparent;
+    border: 1px solid #00000000;
 }
 
 main .tablatures .item button:hover {

@@ -44,7 +44,17 @@ main > .title-box > label {
     animation: fadeIn 4s ease 0.8s forwards;
 }
 
-main > .frame {
+main .wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    flex: 0 0 80%;
+    overflow-y: auto;
+    align-items: center;
+}
+
+main .wrapper .frame {
     flex-direction: column;
     align-items: flex-start;
     opacity: 0;

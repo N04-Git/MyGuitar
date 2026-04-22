@@ -1,5 +1,5 @@
 # API Routes
-from flask import Blueprint, jsonify, request, send_file, send_from_directory, abort
+from flask import Blueprint, jsonify, request, send_from_directory
 import guitar, exercises # type: ignore
 import os
 

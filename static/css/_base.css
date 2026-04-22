@@ -72,7 +72,7 @@ td.xs {
 }
 
 /* Overall Frame look */
-main > .frame {
+main > .frame, main > div > .frame {
     display: flex;
     background-color: rgba(97, 97, 97, 0.05);
     margin: 5px 0px;

@@ -16,5 +16,3 @@
     Chord_HalfDim7
 
 - Cours page : design
-
-- Update favicon
