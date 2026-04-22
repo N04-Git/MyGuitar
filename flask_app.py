@@ -34,6 +34,6 @@ def tablatures():
 def cours():
     return render_template("cours.html")
 
-# Run
+# Run (DEV)
 if __name__ == "__main__":
     app.run(debug=False, port=8020)

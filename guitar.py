@@ -9,9 +9,6 @@ import pathlib
 import zipfile
 import xml.etree.ElementTree as ET
 
-# TMP
-os.system('cls')
-
 #### Constants
 
 #Semitones:F    2m     2M    3m     3M    4j    5-     5j     6m      6M    7m     7M
