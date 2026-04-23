@@ -104,7 +104,10 @@ def get_fretboard():
         mode_specific = data.get('mode')
 
         if key_specific and mode_specific:
-            return jsonify(guitar.get_chord_key_fretboard(chord_id, key_specific, mode_specific))
+            d = guitar.get_chord_key_fretboard(chord_id, key_specific, mode_specific)
+            if not d:
+                return jsonify("ERROR FROM BACKEND")
+            return jsonify(d)
         else:
             return jsonify(guitar.get_chord_fretboard(chord_id))
 

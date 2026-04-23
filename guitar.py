@@ -1176,18 +1176,4 @@ def get_chord_key_fretboard(chord_id: int, key:str, mode:str) -> list:
 # # # # # # # # # # # # # # # # # #
 
 if __name__ == '__main__':
-    n = Note('Do')
-    dom = Chord_Minor(n)
-    c_id = dom.id
-
-    m=get_chord_key_fretboard(c_id, 'Do', 'aeolien')
-
-    p1 = m[0]
-
-    for i in p1:
-        if i['type'] == 'header':
-            continue
-
-        for note in i['notes']:
-            print(note['highlight'], '\t', end='')
-        print('')
+    pass

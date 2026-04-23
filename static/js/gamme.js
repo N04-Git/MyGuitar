@@ -233,7 +233,6 @@ function render_fretboard_key_chord(chord_id) {
         const fretboard_data = response[CURRENT_CHART_NUMBER];
         render_fretboard(fretboard_data, fretboard_container);
     })
-
 }
 
 function chart_arrow_clicked(isPrev) {
