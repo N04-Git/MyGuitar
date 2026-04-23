@@ -166,6 +166,15 @@ main > .frame > * {
 }
 
 #fretboard table tbody tr td.highlight {
-background-color: #91858512;
-  border: 1px solid #afa9a9ba;
+    background-color: #91858512;
+    border: 1px solid #afa9a9ba;
+}
+
+/* Key Notes Highlight */
+#fretboard table tbody tr td.highlight.a {
+}
+
+/* Chord Notes Highlight */
+#fretboard table tbody tr td.highlight.b {
+    background-color: #7774cbb0;;
 }

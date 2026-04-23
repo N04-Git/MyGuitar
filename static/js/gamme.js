@@ -73,9 +73,8 @@ function render_architecture(notes, intervals) {
 
 }
 
-function render_chart() {
+function render_chart(chord_id) {
     // Render chart
-    const chord_id = parseInt(CURRENT_CLICKED_CHORD.getAttribute('data-id'));
     chart_number.innerText = CURRENT_CHART_NUMBER+1;
 
     // Fetch API
@@ -171,13 +170,24 @@ function render_chords(degrees) {
                     chart_right_button.classList.remove('disabled');
 
                     // Render
-                    render_chart();
+                    const chord_id = parseInt(CURRENT_CLICKED_CHORD.getAttribute('data-id'));
+                    render_chart(chord_id);
+                    render_fretboard_key_chord(chord_id);
 
                     // Update chart name
                     chart_name.textContent = chord.name;
                     chart_kind.innerText = "Type : " + chord.kind;
                     chart_feeling.innerText = "Feeling : " + chord.sound;
-                    chart_structure.innerText = "Compo : " + chord.structure.map(v => INTERVALS[v]).join(' - ');
+                    chart_structure.innerHTML = `
+                    <table>
+                        <tr>
+                        ${chord.structure.map(val => `<td style="padding: 4px 8px;">${INTERVALS[val]}</td>`).join('')}
+                        </tr>
+                        <tr>
+                        ${chord.composing_notes.map(note => `<td style="padding: 4px 8px;">${note}</td>`).join('')}
+                        </tr>
+                    </table>
+                    `;
                 })
             }
         })
@@ -189,7 +199,6 @@ function render_chords(degrees) {
 }
 
 function refresh_output () {
-    console.log('API CALL');
 
     // API Data
     param = {
@@ -205,10 +214,6 @@ function refresh_output () {
 
         // Clickable Chords
         render_chords(current_key_data.degrees_quality);
-
-        // Fretboard
-        render_fretboard_key();
-
     })
 
     // Save settings
@@ -216,58 +221,18 @@ function refresh_output () {
     saveSettings(PAGE_SETTINGS, 'gamme');
 }
 
-function render_fretboard_key() {
-    const fretboard_data = current_key_data.fretboard_key
+function render_fretboard_key_chord(chord_id) {
 
-    const fretboard_length = fretboard_data[0].frets.length
-
-    // Reset
-    fretboard_container.innerHTML = '';
-
-    // Create table
-    const t = document.createElement('table');
-    const t_head = document.createElement('thead');
-    const t_body = document.createElement('tbody');
-    t.append(t_head, t_body);
-    fretboard_container.append(t);
-
-    // Create each column
-    const t_rows = [];
-    for (let i=0; i<fretboard_length; i++) {
-        const tr = document.createElement('tr')
-        if (i===0) {
-            t_head.append(tr);
-        } else {
-            t_body.append(tr);
-        }
-        t_rows.push(tr);
+    // Fetch fretboard
+    const p = {
+        'mode':gamme_input.value,
+        'key':  note_input.value,
+        'chord_id': chord_id,
     }
-
-    // Fill each column
-    for (let i=0; i<fretboard_length; i++) {
-
-        fretboard_data.forEach( (row, j) => {
-            const row_type = row.type;
-            const cell = document.createElement('td');
-            if (row_type === 'header') {
-                // Header
-                cell.classList.add('header');
-                cell.textContent = row.frets[i];
-            } else if (row_type === 'row') {
-                // String
-                cell.classList.add('string');
-                cell.textContent = row.notes[i].name;
-
-                if (row.notes[i].highlight) {
-                    cell.classList.add('highlight');
-                }
-            }
-
-            t_rows[j].appendChild(cell);
-
-        })
-    }
-
+    call_api('/fretboard', p).then(response => {
+        const fretboard_data = response[CURRENT_CHART_NUMBER];
+        render_fretboard(fretboard_data, fretboard_container);
+    })
 
 }
 
@@ -299,7 +264,11 @@ function chart_arrow_clicked(isPrev) {
         return
     }
 
-    render_chart()
+    // Render
+    const chord_id = parseInt(CURRENT_CLICKED_CHORD.getAttribute('data-id'));
+    render_chart(chord_id);
+    render_fretboard_key_chord(chord_id);
+
 }
 
 function chord_selector_clicked(item) {

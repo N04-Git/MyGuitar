@@ -187,6 +187,7 @@ main .frame.p3 {
     padding: 7px;
     cursor: pointer;
     transition: all 0.4s ease;
+    margin-top: 5px;
 }
 
 .img-wrap:hover {
@@ -220,4 +221,12 @@ main .frame.p3 {
 
 .frame .chords .chart .infos h4 {
     margin: 8px 0 5px 0;
+}
+
+.frame .chords .chart .infos .structure {
+    margin-top: 13px;
+}
+
+.frame .chords .chart .infos .structure td {
+    font-size: 1.1em;
 }

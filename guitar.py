@@ -715,7 +715,6 @@ class Chord_MinorSus2(Chord):
         )
 """
 
-
 # Keys
 class Key:
     def __init__(self, baseNote:Note) -> None:
@@ -832,7 +831,7 @@ class Key:
                 n_id = noteObj.index % 12
                 for keyNote in N:
                     if keyNote.index % 12 == n_id:
-                        noteObj.highlight = True
+                        noteObj.highlight = 999
 
         return F
 
@@ -1130,8 +1129,63 @@ def get_tabs(prefix:str, sort:str) -> list:
 
     return results
 
+def merge_fretboards(f1:list[dict], f2:list[dict]) -> list:
+    # Copy all highlighted notes from f1 (=pattern) to f2 (=base)
+
+    for i in range(len(f1)):
+        f1_value = f1[i]
+        f2_value = f2[i]
+
+        if f1_value['type'] == 'row' and f2_value['type'] == 'row':
+            # Check highlighted notes in f1
+            f1_notes = f1_value['notes']
+            f2_notes = f2_value['notes']
+
+            if LEFT_HANDED:
+                minimum = min(len(f1_notes), len(f2_notes))
+
+                for j in range(minimum):
+                    f1_note = f1_notes[-minimum+j]
+                    f2_note = f2_notes[-minimum+j]
+                    if f1_note['highlight']:
+                        f2_note['highlight'] = f1_note['highlight']
+
+    return f2
+
+def get_chord_key_fretboard(chord_id: int, key:str, mode:str) -> list:
+    # Get fretboard with key notes highlight + chord notes highlight
+
+    # Key fretboard
+    try:
+        f1 = fretboard_to_dict(KEYS_BY_NAME[mode](Note(key)).get_fretboard())
+    except (KeyError, ValueError):
+        print('Incorrect key/mode :', key, mode)
+        return []
+
+    # Chord fretboard
+    f2 = get_chord_fretboard(chord_id)
+
+    # Merge f1 & f2
+    if f1 and f2:
+        merged = [merge_fretboards(copy.deepcopy(f2_i), copy.deepcopy(f1)) for f2_i in f2]
+
+    return merged
+
 # # # # # # # # # # # # # # # # # #
 
 if __name__ == '__main__':
-    t = get_tabs('Ali', '')
-    print(t)
+    n = Note('Do')
+    dom = Chord_Minor(n)
+    c_id = dom.id
+
+    m=get_chord_key_fretboard(c_id, 'Do', 'aeolien')
+
+    p1 = m[0]
+
+    for i in p1:
+        if i['type'] == 'header':
+            continue
+
+        for note in i['notes']:
+            print(note['highlight'], '\t', end='')
+        print('')

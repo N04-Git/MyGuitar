@@ -27,7 +27,7 @@ function clicked_chord_item(chord) {
     chord_name.innerText = chord.name;
     chord_kind.innerText = 'Type : ' + chord.kind;
     chord_feel.innerText = 'Feeling : ' + chord.sound;
-    chord_comp.innerHTML = 'Composition : ' + chord.structure.map((val, i) => `${INTERVALS[val]} (${chord.composing_notes[i]}) `).join('&nbsp&nbsp&nbsp&nbsp')
+    chord_comp.innerHTML = 'Notes : ' + chord.structure.map((val, i) => `${INTERVALS[val]} (${chord.composing_notes[i]}) `).join('&nbsp&nbsp&nbsp&nbsp')
 
     // Chart
     render_chart();
@@ -36,7 +36,7 @@ function clicked_chord_item(chord) {
     call_api('/fretboard', p)
     .then(fretboard => {
         current_fretboard_data = fretboard;
-        render_fretboard_key();
+        render_fretboard(current_fretboard_data[current_chart_index], fretboard_container);
     })
 }
 
@@ -84,59 +84,6 @@ function render_chart () {
 
 }
 
-function render_fretboard_key() {
-    const fretboard_data = current_fretboard_data[current_chart_index];
-
-    const fretboard_length = fretboard_data[0].frets.length
-
-    // Reset
-    fretboard_container.innerHTML = '';
-
-    // Create table
-    const t = document.createElement('table');
-    const t_head = document.createElement('thead');
-    const t_body = document.createElement('tbody');
-    t.append(t_head, t_body);
-    fretboard_container.append(t);
-
-    // Create each column
-    const t_rows = [];
-    for (let i=0; i<fretboard_length; i++) {
-        const tr = document.createElement('tr')
-        if (i===0) {
-            t_head.append(tr);
-        } else {
-            t_body.append(tr);
-        }
-        t_rows.push(tr);
-    }
-
-    // Fill each column
-    for (let i=0; i<fretboard_length; i++) {
-
-        fretboard_data.forEach( (row, j) => {
-            const row_type = row.type;
-            const cell = document.createElement('td');
-            if (row_type === 'header') {
-                // Header
-                cell.classList.add('header');
-                cell.textContent = row.frets[i];
-            } else if (row_type === 'row') {
-                // String
-                cell.classList.add('string');
-                cell.textContent = row.notes[i].name;
-
-                if (row.notes[i].highlight) {
-                    cell.classList.add('highlight');
-                }
-            }
-
-            t_rows[j].appendChild(cell);
-
-        })
-    }
-}
-
 function render_chord_item(chord) {
     const item = document.createElement('div');
     item.classList.add('item');
@@ -182,8 +129,8 @@ search_kind.addEventListener('change', () => {
     search_chords();
 })
 
-chart_left.onclick = () => { current_chart_index--; render_fretboard_key(); render_chart(); }
-chart_right.onclick = () => { current_chart_index++; render_fretboard_key(); render_chart(); }
+chart_left.onclick = () => { current_chart_index--; render_fretboard(current_fretboard_data[current_chart_index], fretboard_container);; render_chart(); }
+chart_right.onclick = () => { current_chart_index++; render_fretboard(current_fretboard_data[current_chart_index], fretboard_container);; render_chart(); }
 
 // Init
 search_chords();
