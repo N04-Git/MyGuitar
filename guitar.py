@@ -1168,8 +1168,10 @@ def get_chord_key_fretboard(chord_id: int, key:str, mode:str) -> list:
     # Merge f1 & f2
     if f1 and f2:
         merged = [merge_fretboards(copy.deepcopy(f2_i), copy.deepcopy(f1)) for f2_i in f2]
+        return merged
 
-    return merged
+    print('Error: f1 or f2 undefined !', f1, f2)
+    return []
 
 # # # # # # # # # # # # # # # # # #
 
