@@ -36,6 +36,10 @@ select, input {
     font-size: 1.2em;
 }
 
+option {
+    background-color: #292929a4;
+}
+
 button {
     border-color: #c9c9c926;
     border-radius: 4px;
@@ -166,12 +170,12 @@ main > .frame > * {
 }
 
 #fretboard table tbody tr td.highlight {
-    background-color: #91858512;
     border: 1px solid #afa9a9ba;
 }
 
 /* Key Notes Highlight */
 #fretboard table tbody tr td.highlight.a {
+    background-color: #91858512;
 }
 
 /* Chord Notes Highlight */
