@@ -7,7 +7,6 @@ api_router = Blueprint('api', __name__, url_prefix='/api')
 
 ERROR_MISSING_ARGS = ('Error: missing argument(s)')
 
-
 @api_router.route('/')
 def api():
     return jsonify("Welcome To MyGuitar's API ! >> https://myportfolio.ackernoa.fr <<")

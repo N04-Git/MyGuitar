@@ -1021,6 +1021,7 @@ def get_chord_fretboard(chord_id:int):
     chord = Chord._instances_by_id.get(chord_id, None)
     if isinstance(chord, Chord):
         return [fretboard_to_dict(f.apply()) for f in chord.patterns]
+    print('Unknown chord id', chord, 'within list :', Chord._instances_by_id)
     return []
 
 def get_exercies(category:str, sorting:str, prefix:str) -> list:
@@ -1055,25 +1056,24 @@ def fretboard_to_array(fretboard: list[list[Note]]) -> list[list[tuple[int, int]
 
 def get_chords(prefix:str, kind:str) -> list:
     # Get all chords
-    chords_class = [chord for chord in Chord._existing_chords]
-    instances = []
+
+    results = []
+
     for note in EXISTING_NOTES:
-        for c in chords_class:
-            root_note = Note(note)
-            instances.append(
-                c(root_note)
-            )
+        root = Note(note)
 
-    # Filter
-    filtered = []
-    for chord in instances:
-        # Check prefix
-        if prefix.strip() == '' or prefix.lower().strip() in chord.name.lower():
-            # Check kind
-            if kind == '' or kind == chord.kind:
-                filtered.append(chord.to_dict())
+        for c in Chord._existing_chords:
+            chord = c(root)
 
-    return filtered
+            if prefix and prefix.lower() not in chord.name.lower():
+                continue
+
+            if kind and chord.kind != kind:
+                continue
+
+            results.append(chord.to_dict())
+
+    return results
 
 def parse_gpfile(gpfile_path:pathlib.Path) -> dict:
     try:
@@ -1170,10 +1170,24 @@ def get_chord_key_fretboard(chord_id: int, key:str, mode:str) -> list:
         merged = [merge_fretboards(copy.deepcopy(f2_i), copy.deepcopy(f1)) for f2_i in f2]
         return merged
 
-    print('Error: f1 or f2 undefined !', f1, f2)
+    print('Error: f1 or f2 undefined !')
     return []
 
 # # # # # # # # # # # # # # # # # #
+
+# Build all chords
+CHORD_CACHE = {}
+def build_all_chords():
+    if CHORD_CACHE:
+        return CHORD_CACHE
+
+    for note in EXISTING_NOTES:
+        for cls in Chord._existing_chords:
+            c = cls(Note(note))
+            CHORD_CACHE[c.id] = c
+
+    return CHORD_CACHE
+build_all_chords()
 
 if __name__ == '__main__':
     pass
