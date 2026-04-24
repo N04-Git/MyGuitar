@@ -162,6 +162,37 @@ main .exercises .item h4 {
     transform: translateX(-50%) scale(1.4);
 }
 
+#view .tab-control .playback-speed {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#view .tab-control .playback-speed #playback-speed {
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent
+}
+
+#view .tab-control .playback-speed #playback-speed::-moz-range-track {
+    background-color: #3f3f3f42;
+}
+
+#view .tab-control .playback-speed #playback-speed::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+    margin-top: -2px;
+    margin-bottom: -2px;
+    margin-left: -3px;
+}
+
+#view .tab-control .playback-speed #playback-speed-txt {
+    width: 30px;
+    text-align: center;
+}
+
 /* Playbar visible */
 .at-cursor-beat {
     background-color: rgba(255, 255, 255, 0.651);

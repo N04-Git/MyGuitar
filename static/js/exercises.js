@@ -10,6 +10,8 @@ const tab_viewport = view.querySelector('.tab-viewport')
 const tab_main = view.querySelector('.tab-main');
 const tab_restart = view.querySelector('#restart');
 const tab_mute = view.querySelector('#mute');
+const tab_speed = view.querySelector('#playback-speed');
+const tab_speed_txt = view.querySelector('#playback-speed-txt');
 
 // Globals
 PAGE_SETTINGS = getSettings('exercises');
@@ -133,6 +135,11 @@ function updateCommands(api) {
         // Remove focus
         tab_mute.blur();
     }
+
+    tab_speed.addEventListener('input', () => {
+        api.playbackSpeed = tab_speed.value;
+        tab_speed_txt.innerText = tab_speed.value;
+    })
 
 }
 
