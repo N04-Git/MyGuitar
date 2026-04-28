@@ -28,10 +28,13 @@ let current_key_data = null;
 let ACTIVE_CHORDS_SELECTION = {
     'Majeur': true,
     'Mineur': true,
+    'Dim': true,
+    'Triad': false,
     '6th': false,
     '7th': false,
     '9th': false,
     'Sus': false,
+    'Pow': false,
 };
 
 const PAGE_SETTINGS = getSettings('gamme');
@@ -236,32 +239,25 @@ function render_fretboard_key_chord(chord_id) {
 }
 
 function chart_arrow_clicked(isPrev) {
-    if (isPrev && CURRENT_CHART_NUMBER > 0) {
-        // Previous
-        CURRENT_CHART_NUMBER -= 1;
-        if (CURRENT_CHART_NUMBER === 0) {
-            // Disable left
-            chart_left_button.classList.add('disabled');
-            chart_right_button.classList.remove('disabled');
-        } else {
-            // Enable left
-            chart_left_button.classList.remove('disabled');
-        }
+    const nextChart = CURRENT_CHART_NUMBER + (isPrev ? -1 : 1);
 
-    } else if (!isPrev && CURRENT_CHART_NUMBER < MAX_CHART_NUMBER) {
-        // Next
-        CURRENT_CHART_NUMBER += 1;
-        if (CURRENT_CHART_NUMBER === MAX_CHART_NUMBER) {
-            // Disable right
-            chart_right_button.classList.add('disabled');
-            chart_left_button.classList.remove('disabled');
-        } else {
-            // Enable right
-            chart_right_button.classList.remove('disabled');
-        }
-    } else {
-        return
+    // Stop if out of bounds
+    if (nextChart < 0 || nextChart > MAX_CHART_NUMBER) {
+        return;
     }
+
+    CURRENT_CHART_NUMBER = nextChart;
+
+    // Update button states
+    chart_left_button.classList.toggle(
+        'disabled',
+        CURRENT_CHART_NUMBER === 0
+    );
+
+    chart_right_button.classList.toggle(
+        'disabled',
+        CURRENT_CHART_NUMBER === MAX_CHART_NUMBER
+    );
 
     // Render
     const chord_id = parseInt(CURRENT_CLICKED_CHORD.getAttribute('data-id'));
@@ -271,12 +267,13 @@ function chart_arrow_clicked(isPrev) {
 }
 
 function chord_selector_clicked(item) {
+    // Counter is used to make sure at least 1 item is selected
     let c = 0;
     Object.values(ACTIVE_CHORDS_SELECTION).forEach( v => {
         if (v===true) { c++; }
     })
 
-    // Reverse
+    // Reverse (except if only 1 chord selected)
     const value = item.getAttribute('data-val');
     if (c === 1 && ACTIVE_CHORDS_SELECTION[value]) { return }
     ACTIVE_CHORDS_SELECTION[value] = !ACTIVE_CHORDS_SELECTION[value];

@@ -353,7 +353,7 @@ class Chord:
             # Exand frets by 3
             for row in f:
                 for _ in range(3):
-                    row.append((0, -1))  
+                    row.append((0, -1))
 
             rows = len(f)
             cols = len(f[0])
@@ -695,6 +695,196 @@ class Chord_Diminished(Chord):
             ])),
         )
 
+class Chord_Pow(Chord):
+    def __init__(self, root_note: Note) -> None:
+        super().__init__(root_note)
+        self.name += "5"
+        self.kind = "Pow"
+        self.structure = [0, 7]
+        self.sound = "Intense, Neutre"
+        self.patterns = (
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+        )
+
+class Chord_Triad_Maj(Chord):
+    def __init__(self, root_note: Note) -> None:
+        super().__init__(root_note)
+        self.name += "M (tri)"
+        self.kind = "Triad"
+        self.structure = [0, 4, 7]
+        self.sound = ""
+        self.patterns = (
+                    ### PATTERN F35 ###
+            # Pattern F35 sur cordes 5/4/3
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['3M']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+            # Pattern F35 sur cordes 4/3/2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['5J']),
+                NotePosition(3, INTERVALS['3M']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
+            # Pattern F35 sur cordes 3/2/1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3M']),
+                NotePosition(3, INTERVALS['FD']),
+            ])),
+            # Pattern F35 sur cordes 2/1/0
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['5J']),
+                NotePosition(1, INTERVALS['3M']),
+                NotePosition(2, INTERVALS['FD']),
+            ])),
+
+                    ### PATTERN 35F ###
+            # Pattern F35 sur cordes 5/4/3
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['3M']),
+            ])),
+            # Pattern F35 sur cordes 4/3/2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['FD']),
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['3M']),
+            ])),
+            # Pattern F35 sur cordes 3/2/1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['FD']),
+                NotePosition(2, INTERVALS['5J']),
+                NotePosition(3, INTERVALS['3M']),
+            ])),
+            # Pattern F35 sur cordes 2/1/0
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3M']),
+            ])),
+
+                    ### PATTERN 5F3 ###
+            # Pattern F35 sur cordes 5/4/3
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(3, INTERVALS['3M']),
+                NotePosition(4, INTERVALS['FD']),
+                NotePosition(5, INTERVALS['5J']),
+            ])),
+            # Pattern F35 sur cordes 4/3/2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['3M']),
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+            ])),
+            # Pattern F35 sur cordes 3/2/1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['3M']),
+                NotePosition(2, INTERVALS['FD']),
+                NotePosition(3, INTERVALS['5J']),
+            ])),
+            # Pattern F35 sur cordes 2/1/0
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['3M']),
+                NotePosition(1, INTERVALS['FD']),
+                NotePosition(2, INTERVALS['5J']),
+            ])),
+        )
+
+class Chord_Triad_Min(Chord):
+    def __init__(self, root_note: Note) -> None:
+        super().__init__(root_note)
+        self.name += "m (tri)"
+        self.kind = "Triad"
+        self.structure = [0, 3, 7]
+        self.sound = ""
+        self.patterns = (
+                    ### PATTERN F35 ###
+            # Pattern F35 sur cordes 5/4/3
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['3m']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+            # Pattern F35 sur cordes 4/3/2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['5J']),
+                NotePosition(3, INTERVALS['3m']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
+            # Pattern F35 sur cordes 3/2/1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3m']),
+                NotePosition(3, INTERVALS['FD']),
+            ])),
+            # Pattern F35 sur cordes 2/1/0
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['5J']),
+                NotePosition(1, INTERVALS['3m']),
+                NotePosition(2, INTERVALS['FD']),
+            ])),
+
+                    ### PATTERN 35F ###
+            # Pattern F35 sur cordes 5/4/3
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+                NotePosition(5, INTERVALS['3m']),
+            ])),
+            # Pattern F35 sur cordes 4/3/2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['FD']),
+                NotePosition(3, INTERVALS['5J']),
+                NotePosition(4, INTERVALS['3m']),
+            ])),
+            # Pattern F35 sur cordes 3/2/1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['FD']),
+                NotePosition(2, INTERVALS['5J']),
+                NotePosition(3, INTERVALS['3m']),
+            ])),
+            # Pattern F35 sur cordes 2/1/0
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3m']),
+            ])),
+
+                    ### PATTERN 5F3 ###
+            # Pattern F35 sur cordes 5/4/3
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(3, INTERVALS['3m']),
+                NotePosition(4, INTERVALS['FD']),
+                NotePosition(5, INTERVALS['5J']),
+            ])),
+            # Pattern F35 sur cordes 4/3/2
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(2, INTERVALS['3m']),
+                NotePosition(3, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+            ])),
+            # Pattern F35 sur cordes 3/2/1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['3m']),
+                NotePosition(2, INTERVALS['FD']),
+                NotePosition(4, INTERVALS['5J']),
+            ])),
+            # Pattern F35 sur cordes 2/1/0
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['3m']),
+                NotePosition(1, INTERVALS['FD']),
+                NotePosition(2, INTERVALS['5J']),
+            ])),
+        )
+
 """
         >> Chord Template <<
 
@@ -890,7 +1080,9 @@ MAJOR_CHORDS = (
     Chord_Major7,
     Chord_Major9,
     Chord_Sus2,
-    Chord_Sus4
+    Chord_Sus4,
+    Chord_Pow,
+    Chord_Triad_Maj,
 )
 
 MINOR_CHORDS = (
@@ -900,6 +1092,8 @@ MINOR_CHORDS = (
     Chord_Minor9,
     Chord_Sus2,
     Chord_Sus4,
+    Chord_Pow,
+    Chord_Triad_Min,
 )
 
 DIMINISHED_CHORDS = (

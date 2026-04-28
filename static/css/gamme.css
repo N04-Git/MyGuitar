@@ -230,3 +230,8 @@ main .frame.p3 {
 .frame .chords .chart .infos .structure td {
     font-size: 1.1em;
 }
+
+/* Fretboard */
+#fretboard table tr td[class="string"] {
+    opacity: 0.07;
+}
