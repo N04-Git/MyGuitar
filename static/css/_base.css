@@ -34,14 +34,17 @@ select, input {
     padding: 2px 0 2px 4px;
     /* background: rgb(100, 100, 100); */
     font-size: 1.2em;
+    cursor: pointer;
 }
 
 option {
-    background-color: #292929a4;
+    color: #2e2e2ea1;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 button {
-    border-color: #c9c9c926;
+    border: 1px solid #c9c9c926;
     border-radius: 4px;
     background-color: #c9c9c92e;
     cursor: pointer;

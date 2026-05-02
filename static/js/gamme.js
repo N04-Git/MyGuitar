@@ -21,6 +21,7 @@ const selected_chords_options = chords_frame.querySelector('.list .options');
 // Fretboard
 const fretboard_container = document.querySelector('#fretboard')
 
+// Values
 let MAX_CHART_NUMBER = 0;
 let CURRENT_CHART_NUMBER = 0;
 let CURRENT_CLICKED_CHORD = null;
@@ -37,7 +38,10 @@ let ACTIVE_CHORDS_SELECTION = {
     'Pow': false,
 };
 
+// Settings
 const PAGE_SETTINGS = getSettings('gamme');
+gamme_input.value = PAGE_SETTINGS['last_key'][0]
+note_input.value = PAGE_SETTINGS['last_key'][1]
 
 // Functions
 function render_architecture(notes, intervals) {
@@ -221,7 +225,7 @@ function refresh_output () {
 
     // Save settings
     PAGE_SETTINGS['last_key'] = [gamme_input.value, note_input.value];
-    saveSettings(PAGE_SETTINGS, 'gamme');
+    saveSettings('gamme', PAGE_SETTINGS);
 }
 
 function render_fretboard_key_chord(chord_id) {
@@ -286,6 +290,22 @@ function chord_selector_clicked(item) {
 
     // Render chords
     render_chords(current_key_data.degrees_quality);
+}
+
+function goRelativeKey() {
+    const r = current_key_data.relative;
+    let note = current_key_data.notes[r[0]];
+    const key = r[1];
+
+    // Simplify note (fix double 'b' or '#')
+    if (note.endsWith('bb') || note.endsWith('##')) {
+        note = simplifyNote(note);
+    }
+
+    // Select note & key
+    gamme_input.value = key;
+    note_input.value = note;
+    refresh_output();
 }
 
 // Events

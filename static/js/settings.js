@@ -4,40 +4,25 @@
 const settingsTemplate = {
     'gamme': {
         'last_key': ['ionien', 'Do'],
-    },
-    'exercises': {
-        'search': {
-            'name':'',
-            'category': 'all',
-            'sort': 'latest',
-        }
-    },
-    'accords': {},
+    }
 }
 
-// Get global settings
-let SETTINGS = null;
-try {
-    SETTINGS = JSON.parse(localStorage.getItem('settings'));
-} catch {
-    resetSettings();
-}
+let CURRENT_SETTINGS = JSON.parse(localStorage.getItem('settings'));
 
-if (!SETTINGS) {
-    resetSettings();
+// Create if not already
+if (!CURRENT_SETTINGS) {
+    localStorage.setItem('settings', settingsTemplate);
+    CURRENT_SETTINGS = settingsTemplate;
+    console.log('Default Settings');
 }
 
 // Functions
+function saveSettings(page, settingsData) {
+    CURRENT_SETTINGS[page] = settingsData;
+    localStorage.setItem('settings', JSON.stringify(CURRENT_SETTINGS));
+    console.log('Saved Settings');
+}
+
 function getSettings(page) {
-    return SETTINGS[page];
-}
-
-function saveSettings(page_settings, page) {
-    SETTINGS[page] = page_settings;
-    localStorage.setItem('settings', JSON.stringify(SETTINGS));
-}
-
-function resetSettings() {
-    localStorage.setItem('settings', JSON.stringify(settingsTemplate));
-    SETTINGS = settingsTemplate;
+    return CURRENT_SETTINGS[page];
 }

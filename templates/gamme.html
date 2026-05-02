@@ -22,7 +22,7 @@
         <div class="frame p1">
             <!-- Gamme -->
             <div class="field">
-                <label for="gamme">Mode (Gamme) :</label>
+                <!-- <label for="gamme">Mode (Gamme) :</label> -->
                 <select name="gamme" id="gamme">
                     <option value="ionien">Majeur (Ionien)</option>
                     <option value="aeolien">Mineur (Aéolien)</option>
@@ -31,7 +31,7 @@
 
             <!-- Note -->
             <div class="field">
-                <label for="note">Fondamentale :</label>
+                <!-- <label for="note">Fondamentale :</label> -->
                 <select name="note" id="note">
                     <option value="Do">Do</option>
                     <option value="Do#">Do ♯</option>
@@ -55,6 +55,11 @@
                     <option value="Si#">Si ♯</option>
                     <option value="Sib">Si ♭</option>
                 </select>
+            </div>
+
+            <!-- Gamme Relative -->
+            <div class="field">
+                <button onclick="goRelativeKey()">Gamme Relative</button>
             </div>
 
         </div>
@@ -85,7 +90,7 @@
                         <div data-val="Triad" class="item">
                             <h4>Triad</h4>
                         </div>
-                        
+
                         <div data-val="6th" class="item">
                             <h4>6<sup>ème</sup></h4>
                         </div>

@@ -1,4 +1,4 @@
-- GPFile : Accords : add other chords
+- Page Gamme : make fretboard length adjustable
 
 - Add new chords + shape :
     Chord_Major11,

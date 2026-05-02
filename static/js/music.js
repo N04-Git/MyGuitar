@@ -23,6 +23,30 @@ const INTERVALS = {
     21:'13M',
 }
 
+const NOTES = {
+    '0': ['Do', 'Rébb'],
+    '1': ['Do#', 'Si##'],
+    '2': ['Ré', 'Do##', 'Mibb'],
+    '3': ['Ré#', 'Fabb'],
+    '4': ['Mi', 'Ré##'],
+    '5': ['Fa', 'Solbb'],
+    '6': ['Fa#', 'Mi##'],
+    '7': ['Sol', 'Fa##', 'Labb'],
+    '8': ['Sol#'],
+    '9': ['La', 'Sibb', 'Sol##'],
+    '10': ['La#', 'Dobb'],
+    '11': ['Si', 'La##'],
+}
+
+function simplifyNote(note) {
+    for (const key in NOTES) {
+        if (NOTES[key].includes(note)) {
+            return NOTES[key][0];
+        }
+    }
+    console.warn('Could not simplify note : ', note);
+}
+
 const DEGREES = ["I", "II", "III", "IV", "V", "VI", "VII"]
 
 // Functions

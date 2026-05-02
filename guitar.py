@@ -916,6 +916,7 @@ class Key:
         self.name = "DEFAULT NAME VALUE"
         self.architecture = []
         self.sound = "DEFAULT SOUND VALUE"
+        self.relative = (0, "DEFAULT VALUE")
 
     def get_notes(self) -> list[Note]:
         n = [self.baseNote]
@@ -1002,7 +1003,7 @@ class Key:
 
         return degrees_chords
 
-    def get_fretboard(self, length=13) -> list[list[Note]]:
+    def get_fretboard(self, length=15) -> list[list[Note]]:
 
         # New fretboard, key notes
         F = duplicate_fretboard(FRETBOARD)
@@ -1037,7 +1038,8 @@ class Key:
             'sound': self.sound,
             'notes': notes,
             'degrees_quality': degrees,
-            'fretboard_key': fretboard_to_dict(self.get_fretboard())
+            'fretboard_key': fretboard_to_dict(self.get_fretboard()),
+            'relative': self.relative
         }
         return d
 
@@ -1048,6 +1050,7 @@ class IonanKey(Key):
         self.altName = "Major"
         self.architecture = [2, 2, 1, 2, 2, 2, 1]
         self.sound = "Happy, Bright, Stable"
+        self.relative = (5, 'aeolien')
 
 class AeolianKey(Key):
     def __init__(self, baseNote) -> None:
@@ -1056,6 +1059,7 @@ class AeolianKey(Key):
         self.altName = "Natural Minor"
         self.architecture = [2, 1, 2, 2, 1, 2, 2]
         self.sound = "Sad"
+        self.relative = (2, 'ionien')
 
 # FRETBOARD
 FRETBOARD_LENGTH = 20

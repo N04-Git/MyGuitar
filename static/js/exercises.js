@@ -14,7 +14,6 @@ const tab_speed = view.querySelector('#playback-speed');
 const tab_speed_txt = view.querySelector('#playback-speed-txt');
 
 // Globals
-PAGE_SETTINGS = getSettings('exercises');
 let isMuted = true;
 let isPlaying = false;
 
