@@ -16,6 +16,13 @@ const tab_speed_txt = view.querySelector('#playback-speed-txt');
 // Globals
 let isMuted = true;
 let isPlaying = false;
+const PAGE_SETTINGS = {
+    'search': {
+        'name':'',
+        'category': 'all',
+        'sort': 'latest',
+    }
+}
 
 // Functions
 function add_exercise(exercise) {
