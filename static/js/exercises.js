@@ -18,7 +18,6 @@ let isMuted = true;
 let isPlaying = false;
 
 // Functions
-
 function add_exercise(exercise) {
 
     const item = document.createElement('div');
@@ -99,9 +98,6 @@ function refresh_exercises() {
             add_exercise(exo);
         });
     })
-
-    // Save settings
-    saveSettings(PAGE_SETTINGS, 'exercises')
 }
 
 function updateCommands(api) {
