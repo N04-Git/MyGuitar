@@ -7,10 +7,16 @@ const settingsTemplate = {
     }
 }
 
-let CURRENT_SETTINGS = JSON.parse(localStorage.getItem('settings'));
-
 // Create if not already
-if (!CURRENT_SETTINGS) {
+let CURRENT_SETTINGS = null;
+try {
+    CURRENT_SETTINGS = localStorage.getItem('settings');
+    CURRENT_SETTINGS = JSON.parse(CURRENT_SETTINGS);
+    if (CURRENT_SETTINGS === null) {
+        throw new Error();
+    }
+    console.log('Restored Settings')
+} catch {
     localStorage.setItem('settings', settingsTemplate);
     CURRENT_SETTINGS = settingsTemplate;
     console.log('Default Settings');
