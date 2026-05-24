@@ -63,7 +63,7 @@ function render_fretboard(fretboard_data, fretboard_container) {
     t.append(t_head, t_body);
     fretboard_container.append(t);
 
-    // Create each column
+    // Create each column (empty for now)
     const t_rows = [];
     for (let i=0; i<fretboard_length; i++) {
         const tr = document.createElement('tr')
@@ -75,16 +75,24 @@ function render_fretboard(fretboard_data, fretboard_container) {
         t_rows.push(tr);
     }
 
-    // Fill each column
+    // Fill each column (text, color, ...)
     for (let i=0; i<fretboard_length; i++) {
 
         fretboard_data.forEach( (row, j) => {
             const row_type = row.type;
             const cell = document.createElement('td');
+
             if (row_type === 'header') {
                 // Header
+                console.log(row.frets[i])
+
                 cell.classList.add('header');
-                cell.textContent = row.frets[i];
+                cell.textContent = row.frets[i].fret;
+
+                if (row.frets[i].highlight) {
+                    cell.classList.add('highlight');
+                }
+
             } else if (row_type === 'row') {
                 // String
                 cell.classList.add('string');

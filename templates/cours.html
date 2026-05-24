@@ -5,14 +5,33 @@
 
 <!-- CSS -->
 {% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cours.css') }}">
 {% endblock %}
 
 <!-- Content -->
 {% block content %}
     <main>
+
+        <!-- View -->
+        <div id="viewport">
+            <!-- Tree -->
+            <div id="tree"></div>
+        </div>
+
+        <!-- Class View -->
+        <div id="classview">
+            <div class="close">
+                <img src="{{ url_for('static', filename='images/ui/back.png') }}" alt="">
+            </div>
+            <div class="html">
+                <!-- JS HANDLING -->
+            </div>
+        </div>
+
     </main>
 {% endblock %}
 
 <!-- JS -->
 {% block js %}
+<script src="{{ url_for('static', filename='js/cours.js') }}"></script>
 {% endblock %}

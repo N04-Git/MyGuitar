@@ -1,0 +1,236 @@
+/* CSS - Cours */
+
+/* ViewPort */
+#viewport {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	overflow: hidden;
+	cursor: grab;
+}
+
+#viewport:active {
+	cursor: grabbing;
+}
+
+/* Tree */
+#tree {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	left: 5%;
+	top: 5%;
+	width: fit-content;
+}
+
+	/* Node Elements */
+#tree .wrapper {
+	width: fit-content;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#tree .wrapper .node {
+	position: relative;
+	border: 1px solid #666;
+	width: 150px;
+	margin: 48px 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2;
+	background-color: #272727;;
+	border-radius: 4px;
+	transition: all 0.2s ease-in;
+	cursor: pointer;
+}
+
+#tree .wrapper .node:hover {
+	background-color: #5f5f5f;
+}
+
+	/* Vertical Line */
+#tree .wrapper .node::before {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 2px;
+	height: 126px;
+	background: #666;
+	z-index: 1;
+}
+
+#tree .wrapper.no-child .node::before {
+	width: 0;
+	height: 0;
+}
+
+#tree .wrapper .children {
+	display: flex;
+	flex-direction: row;
+}
+
+	/* Horizontal Line */
+.children > .wrapper > .node::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 101%;
+	transform: translateY(-50%);
+	width: 63px;
+	height: 2px;
+	background: #666;
+	z-index: 1;
+}
+
+	/* Horizontal Line - EXCEPT IF LAST CHILD*/
+.children > .wrapper:last-child > .node::after {
+	width: 0px;
+	height: 0px;
+}
+
+/* ClassView */
+#classview {
+	width: 100vw;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-sizing: border-box;
+	opacity: 0;
+	pointer-events: none;
+	z-index: 3;
+	transition: all 0.3s ease;
+	background-image: url('../images/background/classes_bg.png');
+}
+
+#classview.visible {
+	opacity: 1;
+	pointer-events: all;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+#classview > .close {
+	background-color: #1818185c;
+	backdrop-filter: blur(1px);
+	border-radius: 10px;
+	border: 1px solid #6a6a6ac2;
+}
+
+#classview > .close {
+	position: absolute;
+	top: 2%;
+	right: 2%;
+	padding: 12px;
+	z-index: 4;
+	border: 1px solid rgb(54, 54, 54);
+	background-color: #272727c2;
+	padding: 5px;
+	margin: 10px;
+	opacity: 0.7;
+	transition: all 0.2s;
+	cursor: pointer;
+}
+
+#classview > .close img {
+    opacity: 0.4;
+    height: 32px;
+    filter: invert(1);
+    margin: 7px;
+}
+
+#classview > .close:hover {
+	background-color: #50353538;
+	border: 1px solid rgba(112, 17, 17, 0.301);
+	opacity: 1;
+}
+
+#classview > .html {
+	width: 80%;
+	height: 95%;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	padding: 0 5px 5px 5px;
+}
+
+#classview > .html h4.title {
+	font-size: 2.4em;
+	letter-spacing: 0.5px;
+	border-bottom: 2px solid rgba(255,255,255,0.1);
+	padding-bottom: 12px;
+	font-weight: 700;
+	align-self: center;
+	margin: 10px 0 35px;
+}
+
+#classview > .html ul {
+	list-style: none;
+	padding: 0 20px;
+	margin: 0 0 40px;
+	background-color: rgba(255,255,255,0.04);
+	border: 1px solid rgba(255,255,255,0.08);
+	border-radius: 16px;
+	backdrop-filter: blur(3px);
+}
+
+#classview > .html ul li {
+	margin: 10px 0;
+}
+
+#classview > .html ul li a {
+	display: block;
+	padding: 10px 14px;
+	border-radius: 10px;
+	text-decoration: none;
+	color: #dcdcdc;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	border: 1px solid  rgba(179, 179, 179, 0);
+}
+
+#classview > .html ul li a:hover {
+	background: rgba(255,255,255,0.08);
+	color: white;
+	border-color: rgba(179, 179, 179, 0.253);
+	transform: translateX(4px);
+}
+
+#classview > .html section {
+	background-color: rgba(255,255,255,0.04);
+	border-radius: 16px;
+	backdrop-filter: blur(3px);
+	padding: 0px 20px;
+	margin: 20px 0;
+	display: flex;
+	flex-direction: column;
+}
+
+#classview > .html section .center {
+	align-self: center;
+}
+
+#classview > .html h6 {
+	font-size: 1.35em;
+	font-weight: 600;
+	margin: 20px 0 15px;
+	padding-left: 14px;
+	border-left: 4px solid #ffffffa1;
+	color: #ffffff;
+}
+
+#classview > .html p {
+	margin: 0 0 25px;
+	color: #cfcfcf;
+	font-size: 1.02em;
+}
+
+html {
+	scroll-behavior: smooth;
+}

@@ -16,7 +16,7 @@ main {
     animation: fadeInFull 1s ease 0.2s forwards;
 }
 
-h1, h2, h3, h4, h5, p, label, li, select, td, th, span, input, button {
+h1, h2, h3, h4, h5, h6, p, label, li, select, td, th, span, input, button {
     color: white;
     font-family: 'Open Sans';
     width: fit-content;
@@ -162,9 +162,15 @@ main > .frame > * {
 }
 
 #fretboard table thead tr td {
-    background-color: #505050a1;
-    border: 1px solid #8282825c;
+    background-color: #1d1d1da1;
+    border: 1px solid #3a3a3a5c;
     border-radius: 4px;
+    max-height: 20px;
+    box-sizing: border-box;
+}
+
+#fretboard table thead tr td.highlight {
+    background-color: #505050a1;
 }
 
 #fretboard table tr td {

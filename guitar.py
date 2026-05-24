@@ -1160,8 +1160,12 @@ def fretboard_to_dict(fretboard: list[list[Note]]) -> list[dict]:
 
     fret_width = len(fretboard[0])
 
-    # Header (fret indices)
-    frets = list(range(fret_width))
+    # Header (fret number)
+    frets = [
+        {'fret':i, 'highlight': 1 if i in [3, 5, 7, 9, 12, 15, 17, 19] else 0}
+        for i in range(fret_width)
+    ]
+
     if LEFT_HANDED:
         frets = frets[::-1]
 
@@ -1218,6 +1222,7 @@ def get_chord_fretboard(chord_id:int):
     # Find chord instance
     chord = Chord._instances_by_id.get(chord_id, None)
     if isinstance(chord, Chord):
+        # Return fretboard with applied chord's pattern
         return [fretboard_to_dict(f.apply()) for f in chord.patterns]
     print('Unknown chord id', chord, 'within list :', Chord._instances_by_id)
     return []

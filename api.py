@@ -127,3 +127,19 @@ def get_tabs():
 
     except KeyError:
         return jsonify(ERROR_MISSING_ARGS)
+
+@api_router.route('/course', methods=['GET'])
+def get_course():
+    try:
+        return send_from_directory("courses", "structure.json")
+    except:
+        return "File Not Found", 404
+
+@api_router.route('/courses/<fname>')
+def get_htmlfile(fname:str):
+    folder = os.path.join(os.path.abspath("courses"), "data")
+
+    try:
+        return send_from_directory(folder, fname)
+    except FileNotFoundError:
+        return "File Not Found", 404
