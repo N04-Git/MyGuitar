@@ -885,6 +885,86 @@ class Chord_Triad_Min(Chord):
             ])),
         )
 
+class Chord_MajorAdd9(Chord):
+    def __init__(self, root_note:Note):
+        super().__init__(root_note)
+        self.name += "Add9 (M)"
+        self.kind = "9th"
+        self.structure = [0, 4, 7, 14]
+        self.sound = "Dreamy"
+        self.patterns = (
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['9M']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3M']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['9M']),
+                NotePosition(3, INTERVALS['3M']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
+        )
+
+class Chord_MinorAdd9(Chord):
+    def __init__(self, root_note:Note):
+        super().__init__(root_note)
+        self.name += "Add9 (m)"
+        self.kind = "9th"
+        self.structure = [0, 3, 7, 14]
+        self.sound = "Dreamy"
+        self.patterns = (
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['9M']),
+                NotePosition(1, INTERVALS['5J']),
+                NotePosition(2, INTERVALS['3m']),
+                NotePosition(5, INTERVALS['FD']),
+            ])),
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(1, INTERVALS['9M']),
+                NotePosition(3, INTERVALS['3m']),
+                NotePosition(4, INTERVALS['FD']),
+            ])),
+        )
+
+class Chord_MajorAdd11(Chord):
+    def __init__(self, root_note:Note):
+        super().__init__(root_note)
+        self.name += "Add11 (M)"
+        self.kind = "11th"
+        self.structure = [0, 4, 7, 17]
+        self.sound = ""
+        self.patterns = (
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS["5J"]),
+                NotePosition(1, INTERVALS["3M"]),
+                NotePosition(2, INTERVALS["FD"]),
+                NotePosition(3, INTERVALS["11J"]),
+                NotePosition(4, INTERVALS["FD"])
+            ])),
+        )
+
+class Chord_MinorAdd11(Chord):
+    def __init__(self, root_note:Note):
+        super().__init__(root_note)
+        self.name += "Add11 (m)"
+        self.kind = "11th"
+        self.structure = [0, 4, 7, 17]
+        self.sound = ""
+        self.patterns = (
+            # Pattern 1
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS["5J"]),
+                NotePosition(1, INTERVALS["3m"]),
+                NotePosition(2, INTERVALS["FD"]),
+                NotePosition(3, INTERVALS["11J"]),
+                NotePosition(4, INTERVALS["FD"])
+            ])),
+        )
+
 """
         >> Chord Template <<
 
@@ -1087,6 +1167,8 @@ MAJOR_CHORDS = (
     Chord_Sus4,
     Chord_Pow,
     Chord_Triad_Maj,
+    Chord_MajorAdd9,
+    Chord_MajorAdd11,
 )
 
 MINOR_CHORDS = (
@@ -1098,6 +1180,8 @@ MINOR_CHORDS = (
     Chord_Sus4,
     Chord_Pow,
     Chord_Triad_Min,
+    Chord_MinorAdd9,
+    Chord_MinorAdd11,
 )
 
 DIMINISHED_CHORDS = (

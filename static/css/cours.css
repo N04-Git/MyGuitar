@@ -103,8 +103,9 @@
 	opacity: 0;
 	pointer-events: none;
 	z-index: 3;
-	transition: all 0.3s ease;
-	background-image: url('../images/background/classes_bg.png');
+	transition: opacity 0.3s ease;
+	/* background-image: url('../images/background/classes_bg.png'); */
+	background-color: rgb(39, 39, 39);
 }
 
 #classview.visible {
@@ -121,9 +122,6 @@
 	backdrop-filter: blur(1px);
 	border-radius: 10px;
 	border: 1px solid #6a6a6ac2;
-}
-
-#classview > .close {
 	position: absolute;
 	top: 2%;
 	right: 2%;

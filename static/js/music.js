@@ -84,7 +84,6 @@ function render_fretboard(fretboard_data, fretboard_container) {
 
             if (row_type === 'header') {
                 // Header
-                console.log(row.frets[i])
 
                 cell.classList.add('header');
                 cell.textContent = row.frets[i].fret;
