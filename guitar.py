@@ -965,6 +965,36 @@ class Chord_MinorAdd11(Chord):
             ])),
         )
 
+class Chord_Quartal(Chord):
+    def __init__(self, root_note: Note) -> None:
+        super().__init__(root_note)
+        self.name += '4'
+        self.structure = [0, 5, 10]
+        self.sound = "Open, Ambiguous"
+        self.kind = "4th"
+        self.patterns = (
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['4J']),
+                NotePosition(2, INTERVALS['7m']),
+            ])),
+        )
+
+class Chord_Add6(Chord):
+    def __init__(self, root_note: Note) -> None:
+        super().__init__(root_note)
+        self.name += "add6"
+        self.structure = [0, 4, 9]
+        self.sound = "Open, Warm, Ambiguous"
+        self.kind = "6th"
+        self.patterns = (
+            Pattern(ChordPosition(self.rootNote, [
+                NotePosition(0, INTERVALS['FD']),
+                NotePosition(1, INTERVALS['3M']),
+                NotePosition(2, INTERVALS['6M']),
+            ])),
+        )
+
 """
         >> Chord Template <<
 
@@ -995,6 +1025,7 @@ class Key:
         self.baseNote = baseNote
         self.name = "DEFAULT NAME VALUE"
         self.architecture = []
+        self.explicit_degree_steps = []
         self.sound = "DEFAULT SOUND VALUE"
         self.relative = (0, "DEFAULT VALUE")
 
@@ -1013,8 +1044,11 @@ class Key:
             current_letter = current_note.getLetterNumber()
 
             # Target
-            target_letter = current_letter + 1
-            if target_letter == 8:
+            if self.explicit_degree_steps:
+                target_letter = current_letter + self.explicit_degree_steps[i]
+            else:
+                target_letter = current_letter + 1
+            if target_letter >= 8:
                 target_letter = 1
 
             target_index = (current_index + self.architecture[i])
@@ -1034,16 +1068,18 @@ class Key:
         return n
 
     def get_degrees_quality(self) -> list[tuple[Chord]]:
-        scale_notes = self.get_notes()
         # Calculate each degree's quality based on the scale's architecture
+        scale_notes = self.get_notes()
         degrees = []
-        for i in range(len(self.architecture)):
+        scale_len = len(self.architecture)
+        for i in range(scale_len):
             fd = i
             third = (i+2)
             fith = (i+4)
             i3 = get_interval(self.architecture, fd, third)
             i5 = get_interval(self.architecture, third, fith)
-            # print(f"{fd} >>{i3}<< {third} >>{i5}<< {fith}")
+
+            # print(f"{fd} (+{i3}) {third} (+{i5}) {fith}")
 
             if i3 == 2.0 and i5 == 1.5:
                 quality = MAJOR_CHORDS
@@ -1051,6 +1087,12 @@ class Key:
                 quality = MINOR_CHORDS
             elif i3 == 1.5 and i5 == 1.5:
                 quality = DIMINISHED_CHORDS
+            elif i3 == 2.5 and i5 == 2.5:
+                quality = QUARTAL_CHORDS
+            elif i3 == 2.0 and i5 == 2.5:
+                quality = ADD6_CHORDS
+            elif i3 == 2.5 and i5 == 2.0:
+                quality = SUS_CHORDS
             else:
                 print('Unknown interval :', i3, i5)
                 quality = []
@@ -1126,7 +1168,7 @@ class Key:
 class IonanKey(Key):
     def __init__(self, baseNote) -> None:
         super().__init__(baseNote)
-        self.name = "Ionan"
+        self.name = "Ionian"
         self.altName = "Major"
         self.architecture = [2, 2, 1, 2, 2, 2, 1]
         self.sound = "Happy, Bright, Stable"
@@ -1135,11 +1177,32 @@ class IonanKey(Key):
 class AeolianKey(Key):
     def __init__(self, baseNote) -> None:
         super().__init__(baseNote)
-        self.name = "Aeolian Key"
+        self.name = "Aeolian"
         self.altName = "Natural Minor"
         self.architecture = [2, 1, 2, 2, 1, 2, 2]
         self.sound = "Sad"
         self.relative = (2, 'ionien')
+
+class MajorPentatonicKey(Key):
+    def __init__(self, baseNote) -> None:
+        super().__init__(baseNote)
+        self.name = "Major Pentatonic"
+        self.altName = "Pentatonic Major"
+        self.architecture = [2, 2, 3, 2, 3]
+        self.explicit_degree_steps = [1, 1, 2, 1, 2]
+        self.sound = "Bright, Open, Simple"
+        self.relative = (5, 'minor_pentatonic')
+
+class MinorPentatonicKey(Key):
+    def __init__(self, baseNote) -> None:
+        super().__init__(baseNote)
+        self.name = "Minor Pentatonic"
+        self.altName = "Pentatonic Minor"
+        self.architecture = [3, 2, 2, 3, 2]
+        self.explicit_degree_steps = [2, 1, 1, 2, 1]
+        self.sound = "Dark, Emotional"
+        self.relative = (2, 'major_pentatonic')
+
 
 # FRETBOARD
 FRETBOARD_LENGTH = 20
@@ -1188,10 +1251,26 @@ DIMINISHED_CHORDS = (
     Chord_Diminished,
 )
 
+QUARTAL_CHORDS = (
+    Chord_Quartal,
+)
+
+ADD6_CHORDS = (
+    Chord_Add6,
+)
+
+SUS_CHORDS = (
+    Chord_Sus2,
+    Chord_Sus4,
+    Chord_Pow,
+)
+
 # KEYS
 KEYS_BY_NAME = {
     'ionien':   IonanKey,
     'aeolien':  AeolianKey,
+    'major_pentatonic': MajorPentatonicKey,
+    'minor_pentatonic': MinorPentatonicKey
 }
 
 # Functions
@@ -1199,7 +1278,7 @@ def get_interval(architecture:list[int], n1:int, n2:int):
     s = 0
     begin = n1
     for i in range(n2-n1):
-        s += architecture[(begin+i) % 7]
+        s += architecture[(begin+i) % len(architecture)]
 
     return s/2
 

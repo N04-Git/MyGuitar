@@ -192,6 +192,23 @@ main .exercises .item h4 {
     text-align: center;
 }
 
+#view .tab-control #play img, #view .tab-control #pause img {
+    width: 50px;
+    filter: invert(1);
+    opacity: 0.4;
+}
+
+#view .tab-control #play, #view .tab-control #pause {
+    height: 40px;
+    display: none;
+    align-items: center;
+    justify-content: center
+}
+
+#view .tab-control #play.active, #view .tab-control #pause.active {
+    display: flex;
+}
+
 /* Playbar visible */
 .at-cursor-beat {
     background-color: rgba(255, 255, 255, 0.651);

@@ -83,7 +83,7 @@ main .frame.p3 {
     opacity: 0.7;
     border: 1px solid rgb(78, 78, 78);
     margin: 4px;
-    width: 70px;
+    width: 100px;
     height: 55px;
     border-radius: 4px;
     display: flex;
@@ -131,6 +131,7 @@ main .frame.p3 {
     margin: 4px;
     cursor: pointer;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .frame .chords .list .options .item:hover {
@@ -226,7 +227,7 @@ main .frame.p3 {
     border: 1px solid #63636352;;
     align-self: flex-start;
     padding: 0 25px;
-    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .frame .chords .chart .infos h4 {
@@ -244,4 +245,23 @@ main .frame.p3 {
 /* Fretboard */
 #fretboard table tr td[class="string"] {
     opacity: 0.07;
+}
+
+/* Responsive - iPad */
+@media (min-width: 1176px) and (max-width: 1185px) {
+    .frame .chords .list .options {
+        flex-wrap: nowrap;
+        max-width: 550px;
+        overflow-y: hidden;
+    }
+
+    .frame .chords .list .options .item:hover { /* Disable hover properties */
+        opacity: 0.7;
+        background-color: rgba(50, 50, 50, 0.631);
+    }
+
+    .frame .chords .list .options .item.selected {
+        opacity: 0.9;
+        background-color: rgba(90, 90, 90, 0.357);
+    }
 }

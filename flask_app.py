@@ -36,4 +36,4 @@ def cours():
 
 # Run (DEV)
 if __name__ == "__main__":
-    app.run(debug=False, port=8020)
+    app.run(debug=False, port=8020, host="0.0.0.0")

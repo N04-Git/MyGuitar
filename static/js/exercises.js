@@ -12,6 +12,8 @@ const tab_restart = view.querySelector('#restart');
 const tab_mute = view.querySelector('#mute');
 const tab_speed = view.querySelector('#playback-speed');
 const tab_speed_txt = view.querySelector('#playback-speed-txt');
+const tab_play = view.querySelector('#play');
+const tab_pause = view.querySelector('#pause');
 
 // Globals
 let isMuted = true;
@@ -109,18 +111,28 @@ function refresh_exercises() {
 
 function updateCommands(api) {
     // Play
-    document.addEventListener('keydown', () => {
-        if (isPlaying) {
-            api.pause();
-        } else {
-            api.play();
+    document.addEventListener('keydown', (e) => {
+        // Space key
+        if (e.key === ' ') {
+            if (isPlaying) {
+                api.pause();
+                tab_play.classList.add('active')
+                tab_pause.classList.remove('active');
+            } else {
+                api.play();
+                tab_play.classList.remove('active');
+                tab_pause.classList.add('active');
+            }
+            isPlaying = !isPlaying;
         }
-        isPlaying = !isPlaying;
     })
 
     tab_restart.onclick = () => {
         api.stop();
         isPlaying = false;
+        tab_play.classList.add('active');
+        tab_pause.classList.remove('active');
+
         // Remove focus
         tab_restart.blur();
     }
@@ -142,6 +154,26 @@ function updateCommands(api) {
         api.playbackSpeed = tab_speed.value;
         tab_speed_txt.innerText = tab_speed.value;
     })
+
+    tab_play.onclick = () => {
+        if (!isPlaying) {
+            tab_play.classList.remove('active');
+            tab_pause.classList.add('active');
+
+            api.play();
+            isPlaying = true;
+        }
+    }
+
+    tab_pause.onclick = () => {
+        if (isPlaying) {
+            tab_play.classList.add('active');
+            tab_pause.classList.remove('active');
+
+            api.pause();
+            isPlaying = false;
+        }
+    }
 
 }
 

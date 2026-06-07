@@ -36,6 +36,7 @@ let ACTIVE_CHORDS_SELECTION = {
     '9th': false,
     'Sus': false,
     'Pow': false,
+    '4th': true,
 };
 
 // Settings
@@ -139,6 +140,9 @@ function render_chart(chord_id) {
 }
 
 function render_chords(degrees) {
+
+    console.log(degrees)
+
     const chord_container = chords_frame.querySelector('.list .container');
     // Reset
     chord_container.innerHTML = '';
@@ -148,6 +152,7 @@ function render_chords(degrees) {
 
         chords_degree.forEach(chord => {
 
+            // Render if it belongs to selected chords
             if (ACTIVE_CHORDS_SELECTION[chord.kind]) {
 
                 // Create Item

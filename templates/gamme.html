@@ -26,6 +26,8 @@
                 <select name="gamme" id="gamme">
                     <option value="ionien">Majeur (Ionien)</option>
                     <option value="aeolien">Mineur (Aéolien)</option>
+                    <option value="major_pentatonic">Pentatonique Majeur</option>
+                    <option value="minor_pentatonic">Pentatonique Mineur</option>
                 </select>
             </div>
 
@@ -91,6 +93,9 @@
                             <h4>Triad</h4>
                         </div>
 
+                        <div data-val="4th" class="item selected">
+                            <h4>4<sup>ème</sup></h4>
+                        </div>
                         <div data-val="6th" class="item">
                             <h4>6<sup>ème</sup></h4>
                         </div>
@@ -116,6 +121,14 @@
                 </div>
 
                 <div class="chart">
+                    <!-- General Info -->
+                    <h3 class="name"></h3>
+                    <div class="infos">
+                        <h4 class="kind"></h4>
+                        <h4 class="feeling"></h4>
+                        <div class="structure"></div>
+                    </div>
+                    <!-- Chart Selector -->
                     <div class="wrapper">
                         <div class="img-wrap disabled" id='prev-chart'>
                             <img src="{{ url_for('static', filename='images/ui/left_arrow.png' )}}" alt="previous-icon">
@@ -125,13 +138,8 @@
                             <img style="transform: rotate(180deg);" src="{{ url_for('static', filename='images/ui/left_arrow.png' )}}" alt="next-icon">
                         </div>
                     </div>
+                    <!-- Chart Container -->
                     <div class="container"></div>
-                    <h3 class="name"></h3>
-                    <div class="infos">
-                        <h4 class="kind"></h4>
-                        <h4 class="feeling"></h4>
-                        <div class="structure"></div>
-                    </div>
                 </div>
 
             </div>
